@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sign up / Login | Gold Cinema</title>
+
+  <!-- Classic serif display + clean sans for forms -->
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --paper:#f4efe6;
+      --accent-dark:#6b4b2f;
+      --accent-gold:#d8b469;
+      --muted:#7b6a5b;
+      --input-bg:#fffdf8;
+      --border:#cfc2af;
+    }
+
+    /* body and background: soft vintage paper + subtle graphite scribble SVG */
+    body{
+      margin:0;
+      font-family: "Lato", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      background:
+        radial-gradient(circle at 10% 10%, rgba(0,0,0,0.02), transparent 10%),
+        repeating-linear-gradient(transparent, transparent 16px, rgba(0,0,0,0.006) 17px),
+        var(--paper);
+      color:var(--muted);
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      min-height:100vh;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+    }
+
+    header.navbar{
+      width:100%;
+      max-width:1000px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      padding:18px 20px;
+      box-sizing:border-box;
+    }
+    .logo{
+      height:56px;
+      width:auto;
+      filter:grayscale(20%) contrast(95%);
+      border-radius:6px;
+    }
+    header nav ul{
+      list-style:none;
+      margin:0;
+      padding:0;
+      display:flex;
+      gap:18px;
+    }
+    header nav a{
+      text-decoration:none;
+      color:var(--muted);
+      font-weight:600;
+      letter-spacing:0.02em;
+    }
+
+    main.form-container{
+      width:100%;
+      max-width:1000px;
+      background:linear-gradient(180deg, rgba(255,255,255,0.9), rgba(255,251,244,0.96));
+      margin:18px;
+      border:1px solid var(--border);
+      border-radius:10px;
+      padding:32px;
+      box-shadow: 0 10px 30px rgba(20,20,20,0.06);
+      position:relative;
+      overflow:hidden;
+    }
+
+    /* subtle grafit scribble accent (SVG data) */
+    main.form-container::before{
+      content:"";
+      position:absolute;
+      right:-40px;
+      top:-10px;
+      width:320px;
+      height:120px;
+      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 60'><path d='M10 40 C40 10, 80 70, 160 20' stroke='%23000000' stroke-opacity='0.06' stroke-width='6' fill='none' stroke-linecap='round' stroke-linejoin='round'/></svg>");
+      background-repeat:no-repeat;
+      transform:rotate(-8deg) scale(1.2);
+      pointer-events:none;
+    }
+
+    main h2{
+      font-family:"Playfair Display", serif;
+      font-weight:700;
+      margin:0 0 6px 0;
+      color:var(--accent-dark);
+      letter-spacing:0.01em;
+      font-size:26px;
+    }
+    main p.lead{
+      margin:0 0 18px 0;
+      color:var(--muted);
+      font-size:14px;
+    }
+
+    .forms{
+      display:grid;
+      grid-template-columns: 1fr 340px;
+      gap:28px;
+      align-items:start;
+    }
+
+    .form-block{
+      background:transparent;
+      padding:18px 14px;
+      border-radius:8px;
+    }
+
+    .panel{
+      background:linear-gradient(180deg, rgba(255,255,255,0.8), rgba(255,249,242,0.9));
+      border:1px solid var(--border);
+      padding:18px;
+      border-radius:8px;
+    }
+
+    .panel h3{
+      font-family:"Playfair Display", serif;
+      margin:0 0 12px 0;
+      color:var(--accent-dark);
+      font-size:18px;
+    }
+
+    form {
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+    }
+
+    label{
+      font-size:12px;
+      color:var(--muted);
+      display:block;
+      margin-bottom:6px;
+      text-transform:uppercase;
+      letter-spacing:0.08em;
+    }
+
+    .row {
+      display:flex;
+      gap:10px;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="password"],
+    input[type="tel"]{
+      width:100%;
+      padding:11px 12px;
+      border:1px solid var(--border);
+      background:var(--input-bg);
+      border-radius:6px;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.6), 0 2px 6px rgba(0,0,0,0.03);
+      font-size:15px;
+      color:var(--accent-dark);
+      outline:none;
+      transition:box-shadow .12s, border-color .12s, transform .06s;
+    }
+    input:focus{
+      border-color:var(--accent-gold);
+      box-shadow: 0 3px 18px rgba(216,180,105,0.12), inset 0 1px 0 rgba(255,255,255,0.6);
+      transform:translateY(-1px);
+    }
+
+    .small{
+      font-size:12px;
+      color:#8b7f73;
+      margin-top:6px;
+    }
+
+    button{
+      margin-top:8px;
+      background:linear-gradient(180deg,var(--accent-gold),var(--accent-dark));
+      color:#fff;
+      border:none;
+      padding:10px 14px;
+      border-radius:6px;
+      cursor:pointer;
+      font-weight:700;
+      letter-spacing:0.04em;
+      box-shadow: 0 6px 16px rgba(107,75,47,0.14);
+    }
+    button:hover{ opacity:0.97; transform:translateY(-1px); }
+
+    hr.divider{
+      width:1px;
+      background:linear-gradient(to bottom, transparent, rgba(0,0,0,0.04), transparent);
+      margin:0 18px;
+      border:none;
+      height:auto;
+    }
+
+    footer{
+      width:100%;
+      max-width:1000px;
+      text-align:center;
+      font-size:13px;
+      color:#a09487;
+      margin:18px 0 40px;
+    }
+
+    /* responsive */
+    @media (max-width:880px){
+      .forms{ grid-template-columns: 1fr; }
+      hr.divider{ display:none; }
+      header.navbar{ padding:12px 14px; }
+      main.form-container{ margin:12px; padding:20px; }
+    }
+  </style>
+</head>
+<body>
+  <header class="navbar">
+    <img src="logo/A modern logo for Go.png" alt="Gold Cinema Logo" class="logo" />
+    <nav>
+      <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="events.html">Events</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main class="form-container">
+    <h2>Welcome to Gold Cinema</h2>
+    <p class="lead">Step into the spotlight — your Gold Cinema journey begins here!.</p>
+
+    <div class="forms">
+      <!-- Registration Section -->
+      <section class="form-block panel">
+        <h3>Create an Account</h3>
+        <form id="registrationForm" autocomplete="on">
+          <div class="row">
+            <div style="flex:1;">
+              <label for="firstName">First Name</label>
+              <input id="firstName" name="firstName" type="text" placeholder="First Name" required />
+            </div>
+            <div style="width:140px;">
+              <label for="lastName">Last Name</label>
+              <input id="lastName" name="lastName" type="text" placeholder="Last Name" required />
+            </div>
+          </div>
+
+          <label for="address">Address</label>
+          <input id="address" name="address" type="text" placeholder="Street, City" required />
+
+          <div class="row">
+            <div style="flex:1;">
+              <label for="zip">Zip Code</label>
+              <input id="zip" name="zip" type="text" placeholder="Zip Code" required />
+            </div>
+            <div style="flex:1;">
+              <label for="mobile">Mobile Number</label>
+              <input id="mobile" name="mobile" type="tel" placeholder="+254 7..." required />
+            </div>
+          </div>
+
+          <label for="regEmail">Email</label>
+          <input id="regEmail" name="email" type="email" placeholder="you@example.com" required />
+
+          <label for="regPassword">Password</label>
+          <input id="regPassword" name="password" type="password" placeholder="Choose a password" required />
+
+          <label for="referral">Advisor Referral (optional)</label>
+          <input id="referral" name="referral" type="text" placeholder="Referral code or name" />
+
+          <button type="submit">Register</button>
+          <p class="small">By registering you agree to our terms. We value your privacy.</p>
+        </form>
+      </section>
+
+      <!-- Divider -->
+      <hr class="divider" />
+
+      <!-- Login Section -->
+      <section class="form-block panel">
+        <h3>Already Registered?</h3>
+        <form id="loginForm" autocomplete="on">
+          <label for="loginEmail">Email</label>
+          <input id="loginEmail" name="loginEmail" type="email" placeholder="you@example.com" required />
+
+          <label for="loginPassword">Password</label>
+          <input id="loginPassword" name="loginPassword" type="password" placeholder="Enter password" required />
+
+          <button type="submit">Login</button>
+          <p class="small">Forgot password? Visit the account recovery page.</p>
+        </form>
+      </section>
+    </div>
+  </main>
+
+  <footer>
+    <p>&copy; 2025 Gold Cinema | Nakuru, Kenya</p>
+  </footer>
+</body>
+</html>

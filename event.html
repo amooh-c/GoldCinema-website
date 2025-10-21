@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Events | Gold Cinema</title>
+    <link rel="stylesheet" href="styles.css" />
+    <style>
+        :root {
+            --accent: #d4a017;
+            --dark: #0f1724;
+            --muted: #9aa4b2;
+            --card-bg: #0b1220;
+        }
+        body{margin:0;font-family:Inter, system-ui, Arial;background:#071022;color:#e6eef8}
+        .navbar{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;background:linear-gradient(90deg,#071022, #0a1630);box-shadow:0 2px 6px rgba(0,0,0,.4)}
+        .navbar .logo{height:40px}
+        nav ul{list-style:none;display:flex;gap:14px;margin:0;padding:0}
+        nav a{color:#dfe9f6;text-decoration:none;opacity:.95}
+        .user-actions{display:flex;gap:10px;align-items:center}
+        .btn{background:var(--accent);color:#071022;padding:8px 12px;border-radius:8px;text-decoration:none;border:none;cursor:pointer;font-weight:600}
+        .ghost{background:transparent;border:1px solid rgba(255,255,255,.06);color:#dfe9f6;padding:6px 10px;border-radius:8px}
+        main.events-section{max-width:1100px;margin:28px auto;padding:0 18px}
+        .events-hero{display:flex;justify-content:space-between;align-items:center;gap:12px}
+        .events-hero h2{margin:0 0 8px 0}
+        .filters{display:flex;gap:8px;margin:12px 0 18px}
+        .filters select,input{padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,.06);background:transparent;color:#e6eef8}
+        .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px}
+        .event-card{background:linear-gradient(180deg,rgba(255,255,255,0.02),transparent);padding:12px;border-radius:12px;display:flex;gap:12px;align-items:flex-start;border:1px solid rgba(255,255,255,0.04)}
+        .poster{width:120px;height:170px;border-radius:8px;object-fit:cover;background:#061028;flex:0 0 120px}
+        .event-info h3{margin:0 0 6px 0}
+        .meta{color:var(--muted);font-size:13px;margin-bottom:8px}
+        .badges{display:flex;gap:6px;margin-bottom:8px}
+        .badge{font-size:12px;padding:4px 8px;border-radius:999px;background:rgba(255,255,255,0.04);color:#dfe9f6}
+        .book-button{display:inline-block;margin-top:6px;background:var(--accent);padding:8px 10px;border-radius:8px;color:#071022;text-decoration:none;font-weight:700}
+        footer{text-align:center;padding:18px 0;color:var(--muted);margin-top:28px}
+        /* Graffiti style small thumb */
+        .graffiti-thumb{border-radius:6px;box-shadow:0 6px 18px rgba(0,0,0,.45);transform:rotate(-1.5deg)}
+        /* Modal styles */
+        .modal{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(2,6,23,0.6);z-index:60}
+        .modal.open{display:flex}
+        .modal-card{background:#071022;padding:18px;border-radius:12px;min-width:320px;max-width:420px;border:1px solid rgba(255,255,255,.04)}
+        .modal-card h4{margin:0 0 8px 0}
+        .input{width:100%;padding:10px;margin:8px 0;border-radius:8px;border:1px solid rgba(255,255,255,.06);background:transparent;color:#e6eef8}
+        .close-x{background:transparent;border:none;color:#dfe9f6;position:absolute;right:18px;top:18px;font-size:20px;cursor:pointer}
+        .welcome{color:#d4a017;font-weight:700}
+        @media (max-width:560px){.events-hero{flex-direction:column;align-items:flex-start}}
+    </style>
+</head>
+<body>
+    <header class="navbar">
+        <div style="display:flex;align-items:center;gap:12px">
+            <img src="logo.png" alt="Gold Cinema Logo" class="logo" />
+            <nav>
+                <ul>
+                    <li style="display:inline"><a href="index.html">Home</a></li>
+                    <li style="display:inline;margin-left:8px"><a href="dashboard.html">My Bookings</a></li>
+                    <li style="display:inline;margin-left:8px"><a href="profile.html">Profile</a></li>
+                </ul>
+            </nav>
+        </div>
+
+        <div class="user-actions" id="userActions">
+            <!-- Filled by JS: Login/Register or Welcome + Logout -->
+            <button class="ghost" onclick="openModal('login')">Login</button>
+            <button class="btn" onclick="openModal('register')">Create Account</button>
+        </div>
+    </header>
+
+    <main class="events-section">
+        <div class="events-hero">
+            <div>
+                <h2>Upcoming Productions & Streaming Picks</h2>
+                <p style="margin:4px 0;color:var(--muted)">Movies, Netflix series, live graffiti nights and special screenings — curated for now.</p>
+            </div>
+
+            <div style="display:flex;gap:8px;align-items:center">
+                <input id="search" class="input" placeholder="Search title or cast..." style="width:240px"/>
+                <button class="ghost" onclick="filterEvents()">Search</button>
+            </div>
+        </div>
+
+        <div class="filters">
+            <select id="genreFilter">
+                <option value="">All Genres</option>
+                <option>Action</option>
+                <option>Drama</option>
+                <option>Sci-Fi</option>
+                <option>Documentary</option>
+                <option>Art / Live</option>
+            </select>
+
+            <select id="typeFilter">
+                <option value="">All Types</option>
+                <option value="movie">Movie</option>
+                <option value="netflix">Netflix Series</option>
+                <option value="live">Live Event</option>
+            </select>
+
+            <select id="dateFilter">
+                <option value="">Any Date</option>
+                <option>Next 7 days</option>
+                <option>Next 30 days</option>
+                <option>Coming Soon</option>
+            </select>
+        </div>
+
+        <div class="grid" id="eventsGrid">
+            <!-- Event 1: Modern movie -->
+            <div class="event-card" data-type="movie" data-title="Oppenheimer" data-cast="Cillian Murphy">
+                <img class="poster" src="posters/appenheimer.jpg" alt="Oppenheimer poster" />
+                <div class="event-info">
+                    <div class="badges"><span class="badge">Movie</span><span class="badge">Historical</span></div>
+                    <h3>Oppenheimer</h3>
+                    <div class="meta">Cast: Cillian Murphy, Emily Blunt • Venue: Gold Cinema Hall 1</div>
+                    <div class="meta">Showtime: 28 Oct 2025, 6:30 PM • Tickets: 28</div>
+                    <a href="booking.html" class="book-button">Book Now</a>
+                </div>
+            </div>
+
+            <!-- Event 2: Netflix series screening -->
+            <div class="event-card" data-type="netflix" data-title="Stranger Things S5" data-cast="Winona Ryder">
+                <img class="poster" src="posters/stranger-things.jpg" alt="Stranger Things poster" />
+                <div class="event-info">
+                    <div class="badges"><span class="badge">Netflix Series</span><span class="badge">Sci‑Fi</span></div>
+                    <h3>Stranger Things — Season 5 Premiere Screening</h3>
+                    <div class="meta">Special screening + Q&A • Venue: Gold Cinema Hall 2</div>
+                    <div class="meta">Date: 05 Nov 2025 • Tickets: 150</div>
+                    <a href="booking.html" class="book-button">Reserve Seat</a>
+                </div>
+            </div>
+
+            <!-- Event 3: Modern blockbuster -->
+            <div class="event-card" data-type="movie" data-title="Dune: Part Two" data-cast="Timothée Chalamet">
+                <img class="poster" src="posters/dune2.jpg" alt="Dune Part Two poster" />
+                <div class="event-info">
+                    <div class="badges"><span class="badge">Movie</span><span class="badge">Sci‑Fi</span></div>
+                    <h3>Dune: Part Two</h3>
+                    <div class="meta">Cast: Timothée Chalamet • Venue: Gold Cinema IMAX</div>
+                    <div class="meta">Showtime: 12 Nov 2025, 9:00 PM • Tickets: 64</div>
+                    <a href="booking.html" class="book-button">Book Now</a>
+                </div>
+            </div>
+
+            <!-- Event 4: Netflix documentary -->
+            <div class="event-card" data-type="netflix" data-title="The Social Dilemma" data-cast="Various">
+                <img class="poster" src="posters/social-dilemma.jpg" alt="The Social Dilemma poster" />
+                <div class="event-info">
+                    <div class="badges"><span class="badge">Netflix Series</span><span class="badge">Documentary</span></div>
+                    <h3>The Social Dilemma — In‑Cinema Discussion</h3>
+                    <div class="meta">Post-screening panel • Venue: Gold Cinema Studio</div>
+                    <div class="meta">Date: 22 Oct 2025 • Tickets: 40</div>
+                    <a href="booking.html" class="book-button">Join Panel</a>
+                </div>
+            </div>
+
+            <!-- Event 5: Graffiti / Art live night -->
+            <div class="event-card" data-type="live" data-title="Graffiti Night Live" data-cast="Various Artists">
+                <img class="poster graffiti-thumb" src="posters/graffiti-night.jpg" alt="Graffiti Night poster" />
+                <div class="event-info">
+                    <div class="badges"><span class="badge">Live Event</span><span class="badge">Art</span></div>
+                    <h3>Graffiti Night — Live Visuals & DJs</h3>
+                    <div class="meta">Live mural painting, VJs and club set • Venue: Gold Cinema Rooftop</div>
+                    <div class="meta">Date: 31 Oct 2025 • Tickets: 120</div>
+                    <a href="booking.html" class="book-button">Get Ticket</a>
+                </div>
+            </div>
+
+            <!-- Event 6: Netflix special -->
+            <div class="event-card" data-type="netflix" data-title="Black Mirror Special" data-cast="Ensemble">
+                <img class="poster" src="posters/black-mirror.jpg" alt="Black Mirror poster" />
+                <div class="event-info">
+                    <div class="badges"><span class="badge">Netflix Series</span><span class="badge">Anthology</span></div>
+                    <h3>Black Mirror — Special Screening</h3>
+                    <div class="meta">Theme: Tech & Society • Venue: Gold Cinema Hall 3</div>
+                    <div class="meta">Date: 08 Nov 2025 • Tickets: 56</div>
+                    <a href="booking.html" class="book-button">Reserve</a>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 Gold Cinema</p>
+    </footer>
+
+    <!-- Login / Register Modals -->
+    <div id="modal" class="modal" aria-hidden="true">
+        <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+            <button class="close-x" onclick="closeModal()" aria-label="Close">&times;</button>
+            <h4 id="modalTitle">Sign in</h4>
+
+            <form id="authForm" onsubmit="handleAuth(event)">
+                <input id="authName" class="input" placeholder="Full name" required />
+                <input id="authEmail" type="email" class="input" placeholder="Email" required />
+                <input id="authPassword" type="password" class="input" placeholder="Password" required />
+                <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:8px">
+                    <button type="button" class="ghost" onclick="closeModal()">Cancel</button>
+                    <button type="submit" class="btn">Continue</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Basic client-side auth handling to ensure login/register returns user to this page.
+        // In production, replace with proper server-based auth and secure flows.
+
+        let currentMode = 'login'; // or 'register'
+
+        function openModal(mode) {
+            currentMode = mode || 'login';
+            document.getElementById('modalTitle').textContent = (currentMode === 'register') ? 'Create Account' : 'Sign in';
+            document.getElementById('authEmail').value = '';
+            document.getElementById('authPassword').value = '';
+            document.getElementById('authName').value = '';
+            document.getElementById('modal').classList.add('open');
+            document.getElementById('modal').setAttribute('aria-hidden', 'false');
+        }
+
+        function closeModal(){
+            document.getElementById('modal').classList.remove('open');
+            document.getElementById('modal').setAttribute('aria-hidden', 'true');
+        }
+
+        function handleAuth(e){
+            e.preventDefault();
+            const name = document.getElementById('authName').value.trim();
+            const email = document.getElementById('authEmail').value.trim();
+            // NOTE: This is purely client-side demo storage. Do NOT use for real credentials.
+            const user = { name, email, createdAt: Date.now() };
+            localStorage.setItem('goldcinema_user', JSON.stringify(user));
+            closeModal();
+            // Ensure after login/account creation the user lands on this events page.
+            // If the form was opened from another page, redirect to event.html
+            if (!location.pathname.endsWith('event.html') && !location.pathname.endsWith('/event.html')) {
+                location.href = 'event.html';
+            } else {
+                // reload to update UI
+                location.reload();
+            }
+        }
+
+        function logout(){
+            localStorage.removeItem('goldcinema_user');
+            location.reload();
+        }
+
+        function renderUserActions(){
+            const container = document.getElementById('userActions');
+            const userJson = localStorage.getItem('goldcinema_user');
+            if(userJson){
+                const user = JSON.parse(userJson);
+                container.innerHTML = `
+                    <span class="welcome">Welcome, ${escapeHtml(user.name.split(' ')[0] || user.name)}</span>
+                    <button class="ghost" onclick="location.href='profile.html'">Profile</button>
+                    <button class="btn" onclick="logout()">Logout</button>
+                `;
+            } else {
+                container.innerHTML = `
+                    <button class="ghost" onclick="openModal('login')">Login</button>
+                    <button class="btn" onclick="openModal('register')">Create Account</button>
+                `;
+            }
+        }
+
+        function escapeHtml(s){
+            return String(s).replace(/[&<>"']/g, (m) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+        }
+
+        // Simple front-end filter/search
+        function filterEvents(){
+            const q = (document.getElementById('search').value || '').toLowerCase();
+            const genre = document.getElementById('genreFilter').value.toLowerCase();
+            const type = document.getElementById('typeFilter').value.toLowerCase();
+            const cards = document.querySelectorAll('#eventsGrid .event-card');
+            cards.forEach(card => {
+                const title = (card.dataset.title || '').toLowerCase();
+                const cast = (card.dataset.cast || '').toLowerCase();
+                const matchesQ = !q || title.includes(q) || cast.includes(q);
+                const matchesType = !type || (card.dataset.type === type);
+                // genre filtering would require data-genre attributes; skipped for brevity.
+                const show = matchesQ && matchesType;
+                card.style.display = show ? 'flex' : 'none';
+            });
+        }
+
+        // wire Enter key on search
+        document.getElementById('search').addEventListener('keydown', function(e){ if(e.key === 'Enter'){ filterEvents(); e.preventDefault(); } });
+
+        // init
+        renderUserActions();
+    </script>
+</body>
+</html>

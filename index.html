@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Gold Cinema — Home</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css" />
+    <!-- Quick local overrides to center content and add descriptions -->
+    <style>
+        :root{
+            --max-width:1200px;
+            --accent:#cfa63a;
+            --muted:#6b7280;
+            --card-bg:#ffffff;
+        }
+        body{
+            font-family: 'Inter', system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+            margin:0;
+            background:#f6f7fb;
+            color:#111827;
+            -webkit-font-smoothing:antialiased;
+            -moz-osx-font-smoothing:grayscale;
+        }
+        .container{
+            max-width:var(--max-width);
+            margin:0 auto;
+            padding:0 1rem;
+        }
+
+        .topbar{
+            background:#fff;
+            display:flex;
+            gap:1rem;
+            align-items:center;
+            justify-content:space-between;
+            padding:.75rem 0;
+            box-shadow:0 1px 6px rgba(16,24,40,0.06);
+        }
+        .brand{display:flex;align-items:center;gap:.6rem}
+        .logo{height:36px;width:auto}
+        .main-nav{display:flex;gap:.5rem;align-items:center}
+        .main-nav .nav-link{color:#374151;text-decoration:none;padding:.5rem .75rem;border-radius:6px}
+        .main-nav .nav-link.active{background:linear-gradient(90deg,var(--accent),#ffd86b);color:#111}
+
+        main{padding:1.5rem 0}
+        .hero{
+            position:relative;
+            min-height:52vh;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            text-align:center;
+            overflow:hidden;
+            margin-bottom:1.25rem;
+            border-radius:10px;
+        }
+        .hero-bg{
+            position:absolute;
+            inset:0;
+            background-size:cover;
+            background-position:center;
+            filter:brightness(.45);
+            transform:scale(1.03);
+        }
+        .hero-gradient{
+            position:absolute;
+            inset:0;
+            background:linear-gradient(180deg, rgba(9,10,11,0.12), rgba(9,10,11,0.18));
+            mix-blend-mode:multiply;
+        }
+        .hero-content{
+            position:relative;
+            z-index:2;
+            color:#fff;
+            padding:2rem;
+            max-width:900px;
+            width:100%;
+        }
+        .hero h1{font-size:clamp(1.6rem, 3.6vw,2.6rem); margin:.25rem 0 .5rem}
+        .hero p{color:rgba(255,255,255,0.92); margin:0 0 1rem; font-weight:300}
+
+        .btn{display:inline-block;text-decoration:none;padding:.6rem 1rem;border-radius:8px;font-weight:600}
+        .btn-primary{background:var(--accent);color:#111;margin-right:.5rem}
+        .btn-outline{background:transparent;color:#fff;border:1px solid rgba(255,255,255,0.2)}
+
+        .row{padding:1rem 0}
+        .row h2{margin:0 0 .75rem 0;font-size:1.1rem}
+        .row-inner{
+            display:grid;
+            gap:1rem;
+            grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
+            align-items:start;
+        }
+
+        .card{
+            background:var(--card-bg);
+            border-radius:10px;
+            overflow:hidden;
+            box-shadow:0 6px 18px rgba(15,23,42,0.06);
+            text-align:left;
+            width:100%;
+            display:flex;
+            flex-direction:column;
+        }
+        .card img{width:100%;height:auto;display:block;object-fit:cover}
+        .card-info{padding:.75rem 1rem 1rem}
+        .card-title{font-weight:600;margin:0 0 .25rem}
+        .card-meta{font-size:.85rem;color:var(--muted);margin-bottom:.5rem}
+        .card-desc{font-size:.95rem;color:#374151;line-height:1.3}
+        .card-actions{margin-top:.75rem}
+
+        /* Events section anchor spacing */
+        #events{scroll-margin-top:90px}
+
+        .site-footer{background:#111827;color:#fff;padding:1rem 0;margin-top:1.5rem}
+        .footer-inner{max-width:var(--max-width);margin:0 auto;padding:0 1rem;display:flex;justify-content:space-between;align-items:center}
+        .footer-nav a{color:rgba(255,255,255,0.85);margin-left:.75rem;text-decoration:none}
+        @media (max-width:700px){
+            .hero{min-height:48vh;padding:1rem}
+            .hero-content{padding:1rem}
+            .row-inner{grid-template-columns:repeat(auto-fill,minmax(160px,1fr))}
+            .brand-name{display:none}
+        }
+    </style>
+</head>
+<body>
+    <header class="topbar container">
+        <div class="brand">
+            <a href="index.html" aria-label="Gold Cinema home">
+                <img src="logo/A modern logo for Go.png" alt="Gold Cinema logo" class="logo" />
+            </a>
+            <span class="brand-name">Gold Cinema</span>
+        </div>
+
+        <nav class="main-nav" aria-label="Main navigation">
+            <a href="index.html" class="nav-link active">Home</a>
+            <!-- keep a dedicated events page if you want, but the main page has an events section too -->
+            <a href="#events" class="nav-link">Events</a>
+            <a href="book.html" class="nav-link">Book</a>
+            <a href="register-login.html" class="nav-link">Account</a>
+        </nav>
+
+        <div class="profile-area">
+            <button class="icon-btn search" title="Search">🔍</button>
+            <a href="register-login.html" class="profile-btn">Sign Up / Login</a>
+        </div>
+    </header>
+
+    <main class="container">
+        <section class="hero">
+            <div class="hero-bg" style="background-image:url('https://picsum.photos/id/1018/1400/700');"></div>
+            <div class="hero-content">
+                <h1>Experience Entertainment Like Never Before</h1>
+                <p>Blockbusters, live shows, and concerts — all in one place. Browse events and book your seat instantly.</p>
+                <div class="hero-actions">
+                    <a href="#events" class="btn btn-primary">Browse Events</a>
+                    <a href="register-login.html" class="btn btn-outline">Sign Up / Login</a>
+                    <a href="book.html" class="btn btn-primary" style="margin-left:.5rem">Book Now</a>
+                </div>
+            </div>
+            <div class="hero-gradient"></div>
+        </section>
+
+        <!-- Featured -->
+        <section class="row">
+            <h2>Featured</h2>
+            <div class="row-inner">
+                <article class="card">
+                    <img src="https://picsum.photos/300/450?random=1" alt="Poster 1">
+                    <div class="card-info">
+                        <div class="card-title">Gold Horizon</div>
+                        <div class="card-meta">Drama • 2h 10m</div>
+                        <p class="card-desc">A moving tale of ambition and redemption set against the golden skyline. Well-crafted performances and a stirring score.</p>
+                        <div class="card-actions">
+                            <a href="book.html?title=Gold%20Horizon" class="btn btn-primary">Book</a>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="card">
+                    <img src="https://picsum.photos/300/450?random=2" alt="Poster 2">
+                    <div class="card-info">
+                        <div class="card-title">Midnight Echoes</div>
+                        <div class="card-meta">Thriller • 1h 48m</div>
+                        <p class="card-desc">Tension-driven mystery that keeps you guessing — razor-sharp direction and atmospheric visuals.</p>
+                        <div class="card-actions">
+                            <a href="book.html?title=Midnight%20Echoes" class="btn btn-primary">Book</a>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="card">
+                    <img src="https://picsum.photos/300/450?random=3" alt="Poster 3">
+                    <div class="card-info">
+                        <div class="card-title">City of Lights</div>
+                        <div class="card-meta">Romance • 1h 55m</div>
+                        <p class="card-desc">A tender, beautifully written romance that celebrates small moments and human connection.</p>
+                        <div class="card-actions">
+                            <a href="book.html?title=City%20of%20Lights" class="btn btn-primary">Book</a>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="card">
+                    <img src="https://picsum.photos/300/450?random=4" alt="Poster 4">
+                    <div class="card-info">
+                        <div class="card-title">Thunder Run</div>
+                        <div class="card-meta">Action • 2h 5m</div>
+                        <p class="card-desc">High-octane thrills and practical stunts — a well-paced action spectacle for fans of the genre.</p>
+                        <div class="card-actions">
+                            <a href="book.html?title=Thunder%20Run" class="btn btn-primary">Book</a>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="card">
+                    <img src="https://picsum.photos/300/450?random=5" alt="Poster 5">
+                    <div class="card-info">
+                        <div class="card-title">Aurora</div>
+                        <div class="card-meta">Sci-Fi • 2h 12m</div>
+                        <p class="card-desc">Ambitious sci-fi with striking visuals and a thoughtful story about discovery and survival.</p>
+                        <div class="card-actions">
+                            <a href="book.html?title=Aurora" class="btn btn-primary">Book</a>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="card">
+                    <img src="https://picsum.photos/300/450?random=6" alt="Poster 6">
+                    <div class="card-info">
+                        <div class="card-title">The Last Note</div>
+                        <div class="card-meta">Musical • 1h 50m</div>
+                        <p class="card-desc">A heartfelt musical with memorable songs and earnest performances — crafted to linger after the credits.</p>
+                        <div class="card-actions">
+                            <a href="book.html?title=The%20Last%20Note" class="btn btn-primary">Book</a>
+                        </div>
+                    </div>
+                </article>
+            </div>
+        </section>
+
+        <!-- Now Showing -->
+        <section id="events" class="row">
+            <h2>Now Showing</h2>
+            <div class="row-inner">
+                <article class="card">
+                    <img src="https://picsum.photos/300/450?random=7" alt="Poster A">
+                    <div class="card-info">
+                        <div class="card-title">Nocturne</div>
+                        <div class="card-meta">Mystery • 1h 42m</div>
+                        <p class="card-desc">A slow-burn mystery with meticulous pacing and a payoff that rewards attention to detail.</p>
+                        <div class="card-actions">
+                            <a href="book.html?title=Nocturne" class="btn btn-primary">Book</a>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="card">
+                    <img src="https://picsum.photos/300/450?random=8" alt="Poster B">
+                    <div class="card-info">
+                        <div class="card-title">Sunset Riders</div>
+                        <div class="card-meta">Adventure • 2h 3m</div>
+                        <p class="card-desc">Classic adventure beats with sincere character moments and stunning panoramas.</p>
+                        <div class="card-actions">
+                            <a href="book.html?title=Sunset%20Riders" class="btn btn-primary">Book</a>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="card">
+                    <img src="https://picsum.photos/300/450?random=9" alt="Poster C">
+                    <div class="card-info">
+                        <div class="card-title">Quiet Harbor</div>
+                        <div class="card-meta">Independent • 1h 35m</div>
+                        <p class="card-desc">An intimate indie exploring relationships with gentle humor and honest dialogue.</p>
+                        <div class="card-actions">
+                            <a href="book.html?title=Quiet%20Harbor" class="btn btn-primary">Book</a>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="card">
+                    <img src="https://picsum.photos/300/450?random=10" alt="Poster D">
+                    <div class="card-info">
+                        <div class="card-title">Pulse</div>
+                        <div class="card-meta">Sci-Fi Thriller • 1h 58m</div>
+                        <p class="card-desc">A tense, smart thriller about technology and trust, full of smart twists.</p>
+                        <div class="card-actions">
+                            <a href="book.html?title=Pulse" class="btn btn-primary">Book</a>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="card">
+                    <img src="https://picsum.photos/300/450?random=11" alt="Poster E">
+                    <div class="card-info">
+                        <div class="card-title">Golden Hour</div>
+                        <div class="card-meta">Drama • 2h 0m</div>
+                        <p class="card-desc">A carefully crafted character study that celebrates small victories and quiet strength.</p>
+                        <div class="card-actions">
+                            <a href="book.html?title=Golden%20Hour" class="btn btn-primary">Book</a>
+                        </div>
+                    </div>
+                </article>
+            </div>
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <div class="footer-inner">
+            <p>&copy; 2025 Gold Cinema — Kisii, Kenya</p>
+            <nav class="footer-nav">
+                <a href="#events">Events</a>
+                <a href="register-login.html">Account</a>
+                <a href="index.html">Home</a>
+                <a href="book.html">Book</a>
+            </nav>
+        </div>
+    </footer>
+
+    <script>
+        // Robust active-link handling for index + hash links + book.html
+        (function(){
+            const links = document.querySelectorAll('.main-nav .nav-link');
+            const currentFile = (location.pathname.split('/').pop() || 'index.html');
+            links.forEach(l => {
+                const href = l.getAttribute('href');
+                // exact filename match OR hash target
+                if (href === currentFile || (href.startsWith('#') && location.hash === href)) {
+                    links.forEach(x => x.classList.remove('active'));
+                    l.classList.add('active');
+                }
+            });
+        })();
+    </script>
+</body>
+</html>
