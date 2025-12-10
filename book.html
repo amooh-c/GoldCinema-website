@@ -1,432 +1,247 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>Gold Cinema — Book Tickets</title>
-    <style>
-        :root{
-            --bg:#0f1724; --card:#0b1220; --accent:#f59e0b; --muted:#94a3b8; --white:#fff;
-        }
-        body{font-family:Inter,system-ui,Segoe UI,Roboto,Arial;margin:0;background:linear-gradient(180deg,#071427 0%,#071029 100%);color:var(--white)}
-        .container{max-width:980px;margin:36px auto;padding:24px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border-radius:12px;box-shadow:0 6px 30px rgba(2,6,23,0.6)}
-        h1{margin:0 0 6px;font-size:22px}
-        p.lead{color:var(--muted);margin:0 0 18px}
-        .tabs{display:flex;gap:8px;margin-bottom:14px}
-        .tab-btn{padding:8px 12px;border-radius:8px;border:none;cursor:pointer;background:transparent;color:var(--white);border:1px solid rgba(255,255,255,0.04)}
-        .tab-btn.active{background:var(--accent);color:#051022}
-        .grid{display:grid;grid-template-columns:1fr 360px;gap:20px}
-        .card{background:var(--card);padding:16px;border-radius:10px}
-        .card.events-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px}
-        .event-card{background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0));padding:10px;border-radius:8px;display:flex;flex-direction:column;gap:8px}
-        .event-card h3{margin:0;font-size:15px}
-        .event-card p{margin:0;color:var(--muted);font-size:13px}
-        .event-card .meta{display:flex;gap:8px;flex-wrap:wrap}
-        label{display:block;margin:8px 0 6px;font-size:13px;color:var(--muted)}
-        select,input[type="text"],input[type="tel"],input[type="number"],.payment-group{width:100%;padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.06);background:transparent;color:var(--white);box-sizing:border-box}
-        .showtimes{display:flex;gap:8px;flex-wrap:wrap}
-        .btn{background:var(--accent);color:#051022;border:none;padding:10px 14px;border-radius:8px;cursor:pointer;font-weight:600}
-        .btn.secondary{background:transparent;border:1px solid rgba(255,255,255,0.06);color:var(--white)}
-        .screen{background:#111827;height:18px;border-radius:6px;margin:8px 0 14px;display:flex;align-items:center;justify-content:center;font-size:12px;color:var(--muted)}
-        .seats{display:grid;grid-template-columns:repeat(8,1fr);gap:8px}
-        .seat{height:34px;border-radius:6px;background:rgba(255,255,255,0.03);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--muted);font-size:13px}
-        .seat.selected{background:linear-gradient(90deg,var(--accent),#f97316);color:#051022}
-        .seat.taken{background:#2b3138;cursor:not-allowed;color:#718096}
-        .legend{display:flex;gap:12px;align-items:center;margin:12px 0 10px;font-size:13px}
-        .legend span{display:inline-flex;align-items:center;gap:8px}
-        .box{width:14px;height:14px;border-radius:3px;display:inline-block}
-        .summary{display:flex;flex-direction:column;gap:10px}
-        .summary div{display:flex;justify-content:space-between;font-size:15px}
-        small{color:var(--muted)}
-        footer{margin-top:14px;color:var(--muted);font-size:13px}
-        .hidden{display:none}
-        .ticket-type-note{font-size:13px;color:var(--muted);margin-top:6px}
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gold Cinema – Booking</title>
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { background:linear-gradient(135deg, #0f0f0f 0%, #1a1a2e 100%); color:#fff; font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; min-height:100vh; }
+    
+    header { background:linear-gradient(135deg, #d4af37 0%, #f3d15c 100%); color:#111; padding:25px; text-align:center; box-shadow:0 8px 32px rgba(212, 175, 55, 0.3); }
+    header h1 { font-size:28px; font-weight:bold; letter-spacing:2px; }
+
+    .main-nav { display:flex; justify-content:center; gap:30px; background:#16213e; padding:15px; flex-wrap:wrap; box-shadow:0 4px 15px rgba(0,0,0,0.5); }
+    .nav-link { color:#d4af37; text-decoration:none; font-weight:600; transition:all 0.3s; padding:8px 15px; border-radius:5px; }
+    .nav-link:hover, .nav-link.active { background:#d4af37; color:#111; }
+
+    .container { width:95%; max-width:1200px; margin:30px auto; padding:0; }
+    .section { background:linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); padding:30px; border-radius:15px; margin-bottom:25px; box-shadow:0 10px 40px rgba(0,0,0,0.7); border:1px solid rgba(212, 175, 55, 0.2); }
+    .section h2 { font-size:22px; margin-bottom:20px; color:#d4af37; text-transform:uppercase; letter-spacing:1px; }
+    .section h3 { font-size:16px; margin:15px 0 10px 0; color:#f3d15c; }
+
+    /* SEAT MAP */
+    .seat-map { display:grid; grid-template-columns:repeat(auto-fit, minmax(40px, 1fr)); gap:10px; margin:20px 0; max-width:500px; }
+    .seat { width:40px; height:40px; border-radius:8px; text-align:center; line-height:40px; cursor:pointer; font-size:12px; font-weight:bold; transition:all 0.3s; border:2px solid transparent; }
+    .seat:hover { transform:scale(1.1); }
+    .vip { background:linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%); box-shadow:0 4px 15px rgba(37, 99, 235, 0.4); }
+    .regular { background:linear-gradient(135deg, #1abc9c 0%, #16a085 100%); box-shadow:0 4px 15px rgba(26, 188, 156, 0.4); }
+    .student { background:linear-gradient(135deg, #8b5a8f 0%, #5d3a5d 100%); box-shadow:0 4px 15px rgba(139, 90, 143, 0.4); }
+    .seat.selected { background:linear-gradient(135deg, #f1c40f 0%, #e8b708 100%); color:#000; border:2px solid #fff; box-shadow:0 0 20px rgba(241, 196, 15, 0.6); transform:scale(1.15); }
+    .seat.booked { background:linear-gradient(135deg, #c0392b 0%, #a93226 100%); cursor:not-allowed; opacity:0.6; }
+
+    .legend { display:flex; gap:20px; flex-wrap:wrap; margin:20px 0; padding:15px; background:rgba(0,0,0,0.3); border-radius:10px; }
+    .legend-item { display:flex; align-items:center; gap:8px; }
+    .legend-box { width:30px; height:30px; border-radius:5px; }
+
+    /* FORMS */
+    input, select { width:100%; padding:12px; margin-bottom:15px; border-radius:8px; border:1px solid #d4af37; background:#0f1419; color:#fff; font-size:14px; transition:all 0.3s; }
+    input:focus, select:focus { outline:none; border-color:#f3d15c; box-shadow:0 0 15px rgba(212, 175, 55, 0.4); background:#1a1a2e; }
+    input::placeholder { color:#888; }
+
+    button { background:linear-gradient(135deg, #d4af37 0%, #f3d15c 100%); color:#111; padding:14px 35px; border:none; border-radius:8px; font-weight:bold; font-size:16px; cursor:pointer; transition:all 0.3s; text-transform:uppercase; letter-spacing:1px; box-shadow:0 6px 20px rgba(212, 175, 55, 0.3); }
+    button:hover { transform:translateY(-2px); box-shadow:0 10px 30px rgba(212, 175, 55, 0.5); }
+    button:active { transform:translateY(0); }
+
+    .msg { padding:12px 15px; border-radius:8px; margin:15px 0; font-weight:600; }
+    #seatMsg { background:rgba(220, 53, 69, 0.2); color:#ff6b6b; border-left:4px solid #ff6b6b; }
+    #totalMsg { background:rgba(37, 99, 235, 0.2); color:#66b3ff; border-left:4px solid #2563eb; }
+    #finalMsg { background:rgba(26, 188, 156, 0.2); color:#66ffee; border-left:4px solid #1abc9c; }
+
+    .back-btn { background:linear-gradient(135deg, #555 0%, #777 100%); padding:10px 20px; font-size:14px; margin-top:15px; }
+    .back-btn:hover { background:linear-gradient(135deg, #777 0%, #999 100%); }
+
+    @media (max-width:768px) {
+      .main-nav { flex-direction:column; gap:10px; }
+      .section { padding:20px; }
+      header h1 { font-size:22px; }
+      .seat-map { grid-template-columns:repeat(8, 1fr); }
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Ready for an unforgettable experience?</h1>
-        <p class="lead">Secure your seat now for the latest movies, thrilling plays, and electrifying concerts at Gold Cinema. Choose your showtime, pick your favorite seat, and pay securely via M-Pesa, card, or PayPal.</p>
 
-        <div class="tabs">
-            <button id="tabEvents" class="tab-btn active">Events</button>
-            <button id="tabBook" class="tab-btn">Book</button>
-        </div>
+<header>
+  <h1>🎬 Gold Cinema</h1>
+  <p style="font-size:14px; margin-top:5px;">Premium E-Ticket System</p>
+</header>
 
-        <div id="eventsSection" class="card events-list">
-            <!-- Events will be populated by JS -->
-        </div>
+<nav class="main-nav" aria-label="Main navigation">
+  <a href="index.html" class="nav-link">Home</a>
+  <a href="#events" class="nav-link">Events</a>
+  <a href="register-login.html" class="nav-link">Account</a>
+</nav>
 
-        <div id="bookingSection" class="grid hidden">
-            <section class="card">
-                <form id="bookingForm" autocomplete="off">
-                    <label for="event">Event / Movie</label>
-                    <select id="event" required>
-                        <!-- JS will populate events -->
-                    </select>
-
-                    <label for="ticketType">Ticket type</label>
-                    <select id="ticketType" required>
-                        <!-- values are prices in KSh; populated by JS -->
-                    </select>
-                    <div class="ticket-type-note">Selected ticket type applies to all chosen seats. Change it any time before payment.</div>
-
-                    <label for="showtime">Showtime</label>
-                    <div class="showtimes" id="showtimeButtons">
-                        <!-- JS will populate times -->
-                    </div>
-
-                    <label style="margin-top:12px">Select Seats</label>
-                    <div class="screen">SCREEN</div>
-                    <div class="seats" id="seatMap" aria-label="Seat map">
-                        <!-- seats generated by JS -->
-                    </div>
-
-                    <div class="legend">
-                        <span><i class="box" style="background:linear-gradient(90deg,var(--accent),#f97316)"></i> Selected</span>
-                        <span><i class="box" style="background:rgba(255,255,255,0.03)"></i> Available</span>
-                        <span><i class="box" style="background:#2b3138"></i> Taken</span>
-                    </div>
-
-                    <label for="name">Full name</label>
-                    <input id="name" type="text" placeholder="Your full name" required>
-
-                    <label for="email">Email (e-ticket)</label>
-                    <input id="email" type="text" placeholder="you@example.com" required>
-
-                    <div style="margin-top:10px;display:flex;gap:8px">
-                        <button class="btn" type="submit">Pay & Book</button>
-                        <button class="btn secondary" type="button" id="resetBtn">Reset</button>
-                    </div>
-                </form>
-            </section>
-
-            <aside class="card">
-                <div class="summary">
-                    <div><strong>Tickets</strong><strong id="ticketsCount">0</strong></div>
-                    <div><small>Price per seat</small><strong id="ticketPrice">KSh 500</strong></div>
-                    <div><strong>Total</strong><strong id="totalAmount">KSh 0</strong></div>
-                </div>
-
-                <hr style="border:none;border-top:1px solid rgba(255,255,255,0.04);margin:14px 0">
-
-                <label for="paymentMethod">Payment method</label>
-                <div style="display:flex;gap:8px;margin-bottom:10px">
-                    <button class="btn secondary" type="button" data-method="mpesa">M-Pesa</button>
-                    <button class="btn secondary" type="button" data-method="card">Card</button>
-                    <button class="btn secondary" type="button" data-method="paypal">PayPal</button>
-                </div>
-
-                <div id="paymentArea">
-                    <small>Select a payment method to show fields.</small>
-                </div>
-
-                <footer>
-                    <small>Secure payments. Tickets sent to your email. For M-Pesa choose Paybill or Lipa Na M-Pesa option at checkout.</small>
-                </footer>
-            </aside>
-        </div>
+<div class="container">
+  <!-- SEATING -->
+  <div class="section" id="bookingSection">
+    <h2>📍 Select Your Seats</h2>
+    
+    <div class="legend">
+      <div class="legend-item"><div class="legend-box vip"></div> VIP (KSh 1,200)</div>
+      <div class="legend-item"><div class="legend-box regular"></div> Regular (KSh 700)</div>
+      <div class="legend-item"><div class="legend-box student"></div> Student (KSh 350)</div>
     </div>
 
-    <script>
-        // Events-driven booking page
-        (function(){
-            // Sample events data (this represents your "events tab" available events)
-            const events = [
-                {
-                    id: 'gold-cinema-premiere',
-                    title: 'Gold Cinema Premiere — Now Showing',
-                    description: 'The season opening blockbuster with immersive visuals.',
-                    showtimes: ['11:00 AM','01:30 PM','04:00 PM','06:45 PM','09:30 PM'],
-                    prices: { regular:500, vip:900, vvip:1500 },
-                    takenSeats: ['A3','A4','B5','C2','D8']
-                },
-                {
-                    id: 'concert-night',
-                    title: 'Electrifying Concert Night',
-                    description: 'Live bands and DJs for a night to remember.',
-                    showtimes: ['05:00 PM','08:00 PM','10:30 PM'],
-                    prices: { regular:700, vip:1200, vvip:2200 },
-                    takenSeats: ['A1','A2','A3','C5','E7']
-                },
-                {
-                    id: 'grand-play',
-                    title: 'Grand Theatre Play',
-                    description: 'A dramatic performance by award-winning actors.',
-                    showtimes: ['03:00 PM','07:00 PM'],
-                    prices: { regular:400, vip:800, vvip:1400 },
-                    takenSeats: ['B2','B3','D4','F8']
-                }
-            ];
+    <p style="text-align:center; margin:15px 0; font-size:14px; color:#aaa;">🎥 SCREEN 🎥</p>
+    <div class="seat-map" id="seatMap"></div>
+    <p id="totalMsg" class="msg"></p>
 
-            // UI elements
-            const eventsSection = document.getElementById('eventsSection');
-            const bookingSection = document.getElementById('bookingSection');
-            const tabEvents = document.getElementById('tabEvents');
-            const tabBook = document.getElementById('tabBook');
+    <button onclick="goToPayment()">Continue to Payment →</button>
+    <p id="seatMsg" class="msg" style="display:none;"></p>
+  </div>
 
-            const eventSelect = document.getElementById('event');
-            const ticketTypeSelect = document.getElementById('ticketType');
-            const showtimeButtons = document.getElementById('showtimeButtons');
-            const seatMap = document.getElementById('seatMap');
-            const ticketsCount = document.getElementById('ticketsCount');
-            const ticketPriceEl = document.getElementById('ticketPrice');
-            const totalAmount = document.getElementById('totalAmount');
-            const paymentArea = document.getElementById('paymentArea');
+  <!-- PAYMENT FORM -->
+  <div class="section" id="paymentSection" style="display:none;">
+    <h2>💳 Payment Details</h2>
 
-            const seatRows = 6;
-            const seatCols = 8;
-            let currentTicketPrice = 500;
-            let currentTakenSeats = [];
-            let currentEventId = null;
+    <input type="text" id="userName" placeholder="Full Name" required>
+    <input type="email" id="userEmail" placeholder="Email Address" required>
 
-            // Tab switching
-            tabEvents.addEventListener('click', ()=> { tabEvents.classList.add('active'); tabBook.classList.remove('active'); eventsSection.classList.remove('hidden'); bookingSection.classList.add('hidden'); });
-            tabBook.addEventListener('click', ()=> { tabBook.classList.add('active'); tabEvents.classList.remove('active'); bookingSection.classList.remove('hidden'); eventsSection.classList.add('hidden'); });
+    <h3>Select Payment Method</h3>
+    <select id="paymentMethod" onchange="renderPaymentFields()">
+      <option value="">Choose Payment Method</option>
+      <option value="mpesa">📱 M-Pesa</option>
+      <option value="card">💳 Credit/Debit Card</option>
+      <option value="paypal">🅿️ PayPal</option>
+      <option value="cash">💵 Cash on Pickup</option>
+    </select>
 
-            // Populate events list (Events tab)
-            function renderEventsList(){
-                eventsSection.innerHTML = '';
-                events.forEach(ev => {
-                    const card = document.createElement('div');
-                    card.className = 'event-card';
-                    const h = document.createElement('h3'); h.textContent = ev.title;
-                    const p = document.createElement('p'); p.textContent = ev.description;
-                    const meta = document.createElement('div'); meta.className = 'meta';
-                    const times = document.createElement('small'); times.textContent = 'Showtimes: ' + ev.showtimes.join(', ');
-                    const prices = document.createElement('small'); prices.textContent = `Prices: Regular KSh ${ev.prices.regular}`;
-                    const btnWrap = document.createElement('div'); btnWrap.style.marginTop = '6px';
-                    const bookBtn = document.createElement('button'); bookBtn.className = 'btn secondary'; bookBtn.type = 'button'; bookBtn.textContent = 'Book';
-                    bookBtn.addEventListener('click', ()=> {
-                        // switch to booking tab and preselect this event
-                        tabBook.click();
-                        selectEventById(ev.id);
-                        // optionally pre-select first showtime
-                        const firstTime = ev.showtimes[0];
-                        const btn = Array.from(showtimeButtons.querySelectorAll('.btn')).find(b=>b.dataset.time === firstTime);
-                        if(btn) btn.click();
-                        // scroll to booking form
-                        document.getElementById('bookingForm').scrollIntoView({behavior:'smooth'});
-                    });
-                    btnWrap.appendChild(bookBtn);
-                    meta.appendChild(times);
-                    meta.appendChild(prices);
-                    card.appendChild(h);
-                    card.appendChild(p);
-                    card.appendChild(meta);
-                    card.appendChild(btnWrap);
-                    eventsSection.appendChild(card);
-                });
-            }
+    <div id="paymentFields"></div>
 
-            // Populate <select> with events
-            function renderEventOptions(){
-                eventSelect.innerHTML = '';
-                events.forEach(ev=>{
-                    const opt = document.createElement('option');
-                    opt.value = ev.id;
-                    opt.textContent = ev.title;
-                    eventSelect.appendChild(opt);
-                });
-            }
+    <button onclick="submitFinalBooking()">✓ Confirm Booking</button>
+    <button class="back-btn" onclick="goBack()">← Back to Seats</button>
+    <p id="finalMsg" class="msg" style="display:none;"></p>
+  </div>
+</div>
 
-            // Render ticket types for an event
-            function renderTicketTypes(prices){
-                ticketTypeSelect.innerHTML = '';
-                const addOpt = (key, label, value)=>{
-                    const o = document.createElement('option');
-                    o.value = String(value);
-                    o.textContent = `${label} — KSh ${value}`;
-                    ticketTypeSelect.appendChild(o);
-                };
-                addOpt('regular','Regular', prices.regular);
-                addOpt('vip','VIP', prices.vip);
-                addOpt('vvip','VVIP', prices.vvip);
-                ticketTypeSelect.value = String(prices.regular);
-                currentTicketPrice = parseInt(ticketTypeSelect.value,10) || 0;
-                updateSummary();
-            }
+<script>
+let selectedSeats = [];
+const VIP_PRICE=1200, REG_PRICE=700, STUDENT_PRICE=350;
 
-            // Render showtime buttons for an event
-            function renderShowtimes(showtimes){
-                showtimeButtons.innerHTML = '';
-                showtimes.forEach(t=>{
-                    const btn = document.createElement('button');
-                    btn.type = 'button';
-                    btn.className = 'btn secondary';
-                    btn.textContent = t;
-                    btn.dataset.time = t;
-                    btn.addEventListener('click', ()=> {
-                        document.querySelectorAll('#showtimeButtons .btn').forEach(b=>b.classList.remove('selected'));
-                        btn.classList.add('selected');
-                    });
-                    showtimeButtons.appendChild(btn);
-                });
-            }
+function renderSeats(){
+  const map = document.getElementById("seatMap");
+  map.innerHTML = "";
+  const rows = "ABCDEFGH".split("");
+  rows.forEach((row, rIndex) => {
+    for(let n=1; n<=10; n++){
+      let seatID = row+n;
+      let cls = rIndex<2 ? "vip" : rIndex<6 ? "regular" : "student";
+      map.innerHTML += `<div class="seat ${cls}" onclick="toggleSeat('${seatID}', '${cls}')">${seatID}</div>`;
+    }
+  });
+}
 
-            // Seat id helper
-            function seatId(row,col){ return String.fromCharCode(65+row) + (col+1); }
+function toggleSeat(id, cls){
+  let i = selectedSeats.indexOf(id);
+  if(i === -1) selectedSeats.push(id);
+  else selectedSeats.splice(i, 1);
+  document.querySelectorAll('.seat').forEach(seat=>{
+    if(seat.innerText === id) seat.classList.toggle("selected");
+  });
+  calculateTotal();
+}
 
-            // Render seat map using currentTakenSeats
-            function renderSeats(){
-                seatMap.innerHTML = '';
-                for(let r=0;r<seatRows;r++){
-                    for(let c=0;c<seatCols;c++){
-                        const id = seatId(r,c);
-                        const el = document.createElement('div');
-                        el.className = 'seat';
-                        el.textContent = id;
-                        if(currentTakenSeats.includes(id)) el.classList.add('taken');
-                        el.addEventListener('click', ()=> {
-                            if(el.classList.contains('taken')) return;
-                            el.classList.toggle('selected');
-                            updateSummary();
-                        });
-                        seatMap.appendChild(el);
-                    }
-                }
-            }
+function calculateTotal(){
+  let vipCount=0, regCount=0, studentCount=0;
+  selectedSeats.forEach(seat=>{
+    const row=seat.charAt(0);
+    if(row==="A"||row==="B") vipCount++;
+    else if(row==="C"||row==="D"||row==="E"||row==="F") regCount++;
+    else studentCount++;
+  });
+  const total=(vipCount*VIP_PRICE)+(regCount*REG_PRICE)+(studentCount*STUDENT_PRICE);
+  document.getElementById("totalMsg").innerHTML=
+    `${vipCount>0 ? '🔵 VIP ×'+vipCount : ''} ${regCount>0 ? '🟢 Regular ×'+regCount : ''} ${studentCount>0 ? '🟣 Student ×'+studentCount : ''}<br><strong>Total: KSh ${total.toLocaleString()}</strong>`;
+}
 
-            function updateSummary(){
-                const selected = document.querySelectorAll('.seat.selected');
-                const count = selected.length;
-                ticketsCount.textContent = count;
-                totalAmount.textContent = 'KSh ' + (count * currentTicketPrice);
-                ticketPriceEl.textContent = 'KSh ' + currentTicketPrice;
-            }
+function goToPayment(){
+  if(selectedSeats.length === 0){
+    let msg = document.getElementById("seatMsg");
+    msg.style.display="block";
+    msg.innerHTML = "⚠️ Select at least one seat.";
+    return;
+  }
+  document.getElementById("bookingSection").style.display = "none";
+  document.getElementById("paymentSection").style.display = "block";
+}
 
-            // Select an event by id and update UI
-            function selectEventById(id){
-                const ev = events.find(x=>x.id === id);
-                if(!ev) return;
-                currentEventId = ev.id;
-                eventSelect.value = ev.id;
-                renderTicketTypes(ev.prices);
-                renderShowtimes(ev.showtimes);
-                currentTakenSeats = ev.takenSeats.slice();
-                // clear any current seat selection, then render
-                renderSeats();
-                document.querySelectorAll('.seat.selected').forEach(s=>s.classList.remove('selected'));
-                updateSummary();
-            }
+function goBack(){
+  document.getElementById("paymentSection").style.display = "none";
+  document.getElementById("bookingSection").style.display = "block";
+  document.getElementById("finalMsg").style.display = "none";
+}
 
-            // When user changes the event from the select
-            eventSelect.addEventListener('change', ()=> {
-                selectEventById(eventSelect.value);
-            });
+function renderPaymentFields(){
+  const m = document.getElementById("paymentMethod").value;
+  const box = document.getElementById("paymentFields");
+  if(m === "mpesa"){
+    box.innerHTML = `<input type="tel" id="mpesaPhone" placeholder="+254 712 345 678" required>`;
+  }
+  else if(m === "card"){
+    box.innerHTML = `
+      <input type="text" id="cardNumber" placeholder="1234 5678 9012 3456" required>
+      <input type="month" id="cardExpiry" required>
+      <input type="text" id="cardCVV" placeholder="123" maxlength="4" required>
+    `;
+  }
+  else if(m === "paypal"){
+    box.innerHTML = `<input type="email" id="paypalEmail" placeholder="your@paypal.com" required>`;
+  }
+  else box.innerHTML = "";
+}
 
-            // Ticket type change (applies to all seats)
-            ticketTypeSelect.addEventListener('change', ()=> {
-                currentTicketPrice = parseInt(ticketTypeSelect.value, 10) || 0;
-                updateSummary();
-            });
+function submitFinalBooking(){
+  const name = document.getElementById("userName").value;
+  const email = document.getElementById("userEmail").value;
+  const method = document.getElementById("paymentMethod").value;
 
-            // Payment option toggles
-            document.querySelectorAll('[data-method]').forEach(btn=>{
-                btn.addEventListener('click', ()=> {
-                    document.querySelectorAll('[data-method]').forEach(b=>b.classList.remove('selected'));
-                    btn.classList.add('selected');
-                    renderPaymentForm(btn.dataset.method);
-                });
-            });
+  if(!name || !email || !method){
+    let msg = document.getElementById("finalMsg");
+    msg.style.display="block";
+    msg.innerHTML = "⚠️ Fill all required fields.";
+    return;
+  }
 
-            function renderPaymentForm(method){
-                if(method === 'mpesa'){
-                    paymentArea.innerHTML = `
-                        <label style="margin-top:8px">M-Pesa Phone number</label>
-                        <input class="payment-group" id="mpesaPhone" type="tel" placeholder="07xx xxx xxx">
-                        <small>You'll receive a prompt to complete payment on your phone.</small>
-                    `;
-                } else if(method === 'card'){
-                    paymentArea.innerHTML = `
-                        <label style="margin-top:8px">Card number</label>
-                        <input class="payment-group" id="cardNumber" type="text" placeholder="4242 4242 4242 4242">
-                        <label style="margin-top:8px">Expiry (MM/YY)</label>
-                        <input class="payment-group" id="cardExpiry" type="text" placeholder="MM/YY">
-                        <label style="margin-top:8px">CVC</label>
-                        <input class="payment-group" id="cardCVC" type="number" placeholder="123">
-                        <small>Card payments are processed securely.</small>
-                    `;
-                } else if(method === 'paypal'){
-                    paymentArea.innerHTML = `
-                        <label style="margin-top:8px">PayPal email</label>
-                        <input class="payment-group" id="paypalEmail" type="text" placeholder="you@paypal.com">
-                        <small>You'll be redirected to PayPal to complete the payment.</small>
-                    `;
-                } else {
-                    paymentArea.innerHTML = `<small>Select a payment method to show fields.</small>`;
-                }
-            }
+  let vipCount=0, regCount=0, studentCount=0;
+  selectedSeats.forEach(seat=>{
+    const row=seat.charAt(0);
+    if(row==="A"||row==="B") vipCount++;
+    else if(row==="C"||row==="D"||row==="E"||row==="F") regCount++;
+    else studentCount++;
+  });
+  const amount=(vipCount*VIP_PRICE)+(regCount*REG_PRICE)+(studentCount*STUDENT_PRICE);
 
-            // Form submission (client-side demo)
-            document.getElementById('bookingForm').addEventListener('submit', function(e){
-                e.preventDefault();
-                const name = document.getElementById('name').value.trim();
-                const email = document.getElementById('email').value.trim();
-                const selectedSeats = Array.from(document.querySelectorAll('.seat.selected')).map(s=>s.textContent);
-                const selectedTimeBtn = document.querySelector('#showtimeButtons .btn.selected');
-                if(!selectedTimeBtn){
-                    alert('Please choose a showtime.');
-                    return;
-                }
-                if(selectedSeats.length === 0){
-                    alert('Please select at least one seat.');
-                    return;
-                }
-                if(!name || !email){
-                    alert('Please enter name and email.');
-                    return;
-                }
+  if(method === "mpesa"){
+    const phone = document.getElementById("mpesaPhone").value;
+    let payload = { phone, tickets: selectedSeats.length, email, seats: selectedSeats, name, amount };
 
-                // Determine chosen payment method & collect payment data
-                const pmBtn = document.querySelector('[data-method].selected');
-                const paymentMethod = pmBtn ? pmBtn.dataset.method : null;
-                if(!paymentMethod){
-                    alert('Please choose a payment method.');
-                    return;
-                }
+    fetch("http://localhost:5000/api/book", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    })
+    .then(res => res.json())
+    .then(data => {
+      let msg = document.getElementById("finalMsg");
+      msg.style.display="block";
+      msg.innerHTML = "✓ " + data.message;
+    })
+    .catch(err => {
+      let msg = document.getElementById("finalMsg");
+      msg.style.display="block";
+      msg.innerHTML = "❌ Error: " + err;
+    });
+  } else {
+    let msg = document.getElementById("finalMsg");
+    msg.style.display="block";
+    msg.innerHTML = "⚠️ Currently only M-Pesa STK Push is supported.";
+  }
+}
 
-                const amount = selectedSeats.length * currentTicketPrice;
-                const ticketTypeLabel = ticketTypeSelect.options[ticketTypeSelect.selectedIndex].text;
+renderSeats();
+calculateTotal();
+</script>
 
-                const summary = [
-                    'Booking summary',
-                    'Name: ' + name,
-                    'Email: ' + email,
-                    'Event: ' + eventSelect.options[eventSelect.selectedIndex].text,
-                    'Showtime: ' + selectedTimeBtn.dataset.time,
-                    'Ticket type: ' + ticketTypeLabel,
-                    'Seats: ' + selectedSeats.join(', '),
-                    'Payment: ' + paymentMethod.toUpperCase(),
-                    'Total: KSh ' + amount
-                ].join('\n');
-
-                alert(summary + '\n\n(This is a demo. Integrate a secure payment gateway server-side to complete bookings.)');
-            });
-
-            // Reset button
-            document.getElementById('resetBtn').addEventListener('click', ()=>{
-                document.querySelectorAll('.seat.selected').forEach(s=>s.classList.remove('selected'));
-                document.querySelectorAll('#showtimeButtons .btn').forEach(b=>b.classList.remove('selected'));
-                document.querySelectorAll('[data-method]').forEach(b=>b.classList.remove('selected'));
-                renderPaymentForm(null);
-                document.getElementById('name').value = '';
-                document.getElementById('email').value = '';
-                // reset ticket type back to event default
-                const currentEvent = events.find(e=>e.id === currentEventId) || events[0];
-                renderTicketTypes(currentEvent.prices);
-                currentTicketPrice = parseInt(ticketTypeSelect.value, 10) || 0;
-                updateSummary();
-            });
-
-            // Initialize UI
-            renderEventsList();
-            renderEventOptions();
-            // default select first event
-            selectEventById(events[0].id);
-            renderPaymentForm(null);
-            updateSummary();
-        })();
-    </script>
 </body>
 </html>

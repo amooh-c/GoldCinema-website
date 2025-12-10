@@ -6,7 +6,7 @@
     <title>Gold Cinema — Home</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css" />
-    <!-- Quick local overrides to center content and add descriptions -->
+    
     <style>
         :root{
             --max-width:1200px;
@@ -124,7 +124,7 @@
         }
     </style>
 </head>
-<body>
+<body data-page="home">
     <header class="topbar container">
         <div class="brand">
             <a href="index.html" aria-label="Gold Cinema home">
@@ -141,10 +141,7 @@
             <a href="register-login.html" class="nav-link">Account</a>
         </nav>
 
-        <div class="profile-area">
-            <button class="icon-btn search" title="Search">🔍</button>
-            <a href="register-login.html" class="profile-btn">Sign Up / Login</a>
-        </div>
+        
     </header>
 
     <main class="container">
@@ -242,7 +239,7 @@
 
         <!-- Now Showing -->
         <section id="events" class="row">
-            <h2>Now Showing</h2>
+            <h2>Now Showing</h2> 
             <div class="row-inner">
                 <article class="card">
                     <img src="https://picsum.photos/300/450?random=7" alt="Poster A">
@@ -256,7 +253,7 @@
                     </div>
                 </article>
 
-                <article class="card">
+                <article class=" card">
                     <img src="https://picsum.photos/300/450?random=8" alt="Poster B">
                     <div class="card-info">
                         <div class="card-title">Sunset Riders</div>
@@ -310,29 +307,10 @@
     <footer class="site-footer">
         <div class="footer-inner">
             <p>&copy; 2025 Gold Cinema — Kisii, Kenya</p>
-            <nav class="footer-nav">
-                <a href="#events">Events</a>
-                <a href="register-login.html">Account</a>
-                <a href="index.html">Home</a>
-                <a href="book.html">Book</a>
-            </nav>
+           
         </div>
     </footer>
-
-    <script>
-        // Robust active-link handling for index + hash links + book.html
-        (function(){
-            const links = document.querySelectorAll('.main-nav .nav-link');
-            const currentFile = (location.pathname.split('/').pop() || 'index.html');
-            links.forEach(l => {
-                const href = l.getAttribute('href');
-                // exact filename match OR hash target
-                if (href === currentFile || (href.startsWith('#') && location.hash === href)) {
-                    links.forEach(x => x.classList.remove('active'));
-                    l.classList.add('active');
-                }
-            });
-        })();
-    </script>
+<script src="script.js"></script>
+    
 </body>
 </html>

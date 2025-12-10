@@ -2,304 +2,996 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Sign up / Login | Gold Cinema</title>
-
-  <!-- Classic serif display + clean sans for forms -->
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
-
+  <title>Gold Cinema — Register / Login / Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
-    :root{
-      --paper:#f4efe6;
-      --accent-dark:#6b4b2f;
-      --accent-gold:#d8b469;
-      --muted:#7b6a5b;
-      --input-bg:#fffdf8;
-      --border:#cfc2af;
+    :root {
+      --gold-1: #d4af37;
+      --gold-2: #b8860b;
+      --bg-1: #232526;
+      --bg-2: #414345;
+      --panel-bg: #edeee9;
+      --success: #27ae60;
+      --danger: #c0392b;
+      --warning: #f39c12;
     }
+    html,body{height:100%;margin:0;font-family:Segoe UI, Arial, sans-serif;background:linear-gradient(120deg,var(--bg-1) 0%,var(--bg-2) 100%);color:#222}
+    .form-block.panel {
+      background: var(--panel-bg);
+      border-radius: 12px;
+      box-shadow: 0 8px 28px rgba(44,62,80,.15);
+      padding:1.6rem;
+      max-width:420px;
+      margin:32px auto;
+      animation: fadeIn .6s;
+    }
+    @keyframes fadeIn {from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+    h3{margin:0 0 1rem;text-align:center;color:var(--gold-1);letter-spacing:.6px}
+    label{display:block;margin-bottom:.25rem;color:#333;font-weight:600;font-size:.95rem}
+    input[type="text"],input[type="email"],input[type="password"],input[type="tel"],input[type="date"],select,textarea{
+      width:100%;padding:.65rem .85rem;border:1px solid #e0e0e0;border-radius:8px;background:#fafafa;font-size:1rem;outline:none;margin-bottom:.9rem;box-sizing:border-box;
+    }
+    input:focus,select:focus,textarea:focus{border-color:var(--gold-1);background:#fffbe6}
+    .row{display:flex;gap:1rem;margin-bottom:.6rem}
+    .row .col{flex:1}
+    button.btn{display:inline-block;background:linear-gradient(90deg,var(--gold-1) 0%,var(--gold-2) 100%);color:#fff;border:none;border-radius:8px;padding:.8rem 1rem;font-weight:700;cursor:pointer;font-size:1rem}
+    button.btn:hover{opacity:.9;transform:translateY(-2px)}
+    button.btn.secondary{background:#efefef;color:#333;border:1px solid #ddd}
+    button.btn.secondary:hover{background:#e0e0e0}
+    .small{text-align:center;color:#666;font-size:.95rem;margin-top:.6rem}
+    .small a{color:var(--gold-1);text-decoration:none;font-weight:600}
+    .small a:hover{text-decoration:underline}
+    .alert{padding:.8rem;border-radius:8px;margin-bottom:.8rem;display:none;font-size:.95rem}
+    .alert.error{background:#fadbd8;color:var(--danger);border:1px solid var(--danger)}
+    .alert.success{background:#d5f4e6;color:var(--success);border:1px solid var(--success)}
+    .alert.warning{background:#fdebd0;color:var(--warning);border:1px solid var(--warning)}
+    .alert.show{display:block}
 
-    /* body and background: soft vintage paper + subtle graphite scribble SVG */
-    body{
-      margin:0;
-      font-family: "Lato", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
-      background:
-        radial-gradient(circle at 10% 10%, rgba(0,0,0,0.02), transparent 10%),
-        repeating-linear-gradient(transparent, transparent 16px, rgba(0,0,0,0.006) 17px),
-        var(--paper);
-      color:var(--muted);
-      -webkit-font-smoothing:antialiased;
-      -moz-osx-font-smoothing:grayscale;
-      min-height:100vh;
-      display:flex;
-      flex-direction:column;
-      align-items:center;
-    }
-
-    header.navbar{
-      width:100%;
-      max-width:1000px;
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      padding:18px 20px;
-      box-sizing:border-box;
-    }
-    .logo{
-      height:56px;
-      width:auto;
-      filter:grayscale(20%) contrast(95%);
-      border-radius:6px;
-    }
-    header nav ul{
-      list-style:none;
-      margin:0;
-      padding:0;
-      display:flex;
-      gap:18px;
-    }
-    header nav a{
-      text-decoration:none;
-      color:var(--muted);
-      font-weight:600;
-      letter-spacing:0.02em;
-    }
-
-    main.form-container{
-      width:100%;
-      max-width:1000px;
-      background:linear-gradient(180deg, rgba(255,255,255,0.9), rgba(255,251,244,0.96));
-      margin:18px;
-      border:1px solid var(--border);
-      border-radius:10px;
-      padding:32px;
-      box-shadow: 0 10px 30px rgba(20,20,20,0.06);
-      position:relative;
-      overflow:hidden;
-    }
-
-    /* subtle grafit scribble accent (SVG data) */
-    main.form-container::before{
-      content:"";
-      position:absolute;
-      right:-40px;
-      top:-10px;
-      width:320px;
-      height:120px;
-      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 60'><path d='M10 40 C40 10, 80 70, 160 20' stroke='%23000000' stroke-opacity='0.06' stroke-width='6' fill='none' stroke-linecap='round' stroke-linejoin='round'/></svg>");
-      background-repeat:no-repeat;
-      transform:rotate(-8deg) scale(1.2);
-      pointer-events:none;
-    }
-
-    main h2{
-      font-family:"Playfair Display", serif;
-      font-weight:700;
-      margin:0 0 6px 0;
-      color:var(--accent-dark);
-      letter-spacing:0.01em;
-      font-size:26px;
-    }
-    main p.lead{
-      margin:0 0 18px 0;
-      color:var(--muted);
-      font-size:14px;
-    }
-
-    .forms{
-      display:grid;
-      grid-template-columns: 1fr 340px;
-      gap:28px;
-      align-items:start;
-    }
-
-    .form-block{
-      background:transparent;
-      padding:18px 14px;
-      border-radius:8px;
-    }
-
-    .panel{
-      background:linear-gradient(180deg, rgba(255,255,255,0.8), rgba(255,249,242,0.9));
-      border:1px solid var(--border);
-      padding:18px;
-      border-radius:8px;
-    }
-
-    .panel h3{
-      font-family:"Playfair Display", serif;
-      margin:0 0 12px 0;
-      color:var(--accent-dark);
-      font-size:18px;
-    }
-
-    form {
-      display:flex;
-      flex-direction:column;
-      gap:10px;
-    }
-
-    label{
-      font-size:12px;
-      color:var(--muted);
-      display:block;
-      margin-bottom:6px;
-      text-transform:uppercase;
-      letter-spacing:0.08em;
-    }
-
-    .row {
-      display:flex;
-      gap:10px;
-    }
-
-    input[type="text"],
-    input[type="email"],
-    input[type="password"],
-    input[type="tel"]{
-      width:100%;
-      padding:11px 12px;
-      border:1px solid var(--border);
-      background:var(--input-bg);
-      border-radius:6px;
-      box-shadow: inset 0 1px 0 rgba(255,255,255,0.6), 0 2px 6px rgba(0,0,0,0.03);
-      font-size:15px;
-      color:var(--accent-dark);
-      outline:none;
-      transition:box-shadow .12s, border-color .12s, transform .06s;
-    }
-    input:focus{
-      border-color:var(--accent-gold);
-      box-shadow: 0 3px 18px rgba(216,180,105,0.12), inset 0 1px 0 rgba(255,255,255,0.6);
-      transform:translateY(-1px);
-    }
-
-    .small{
-      font-size:12px;
-      color:#8b7f73;
-      margin-top:6px;
-    }
-
-    button{
-      margin-top:8px;
-      background:linear-gradient(180deg,var(--accent-gold),var(--accent-dark));
-      color:#fff;
-      border:none;
-      padding:10px 14px;
-      border-radius:6px;
-      cursor:pointer;
-      font-weight:700;
-      letter-spacing:0.04em;
-      box-shadow: 0 6px 16px rgba(107,75,47,0.14);
-    }
-    button:hover{ opacity:0.97; transform:translateY(-1px); }
-
-    hr.divider{
-      width:1px;
-      background:linear-gradient(to bottom, transparent, rgba(0,0,0,0.04), transparent);
-      margin:0 18px;
-      border:none;
-      height:auto;
-    }
-
-    footer{
-      width:100%;
-      max-width:1000px;
-      text-align:center;
-      font-size:13px;
-      color:#a09487;
-      margin:18px 0 40px;
-    }
-
-    /* responsive */
-    @media (max-width:880px){
-      .forms{ grid-template-columns: 1fr; }
-      hr.divider{ display:none; }
-      header.navbar{ padding:12px 14px; }
-      main.form-container{ margin:12px; padding:20px; }
-    }
+    /* Dashboard layout */
+    .dashboard {max-width:1200px;margin:28px auto;padding:18px;display:none}
+    .dash-header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:24px;background:#fff;padding:16px;border-radius:10px;box-shadow:0 4px 16px rgba(0,0,0,.08)}
+    .welcome {display:flex;align-items:center;gap:16px;flex:1}
+    .welcome-text{font-size:18px;color:#222}
+    .welcome-text strong{color:var(--gold-1)}
+    .profile-circle{width:56px;height:56px;border-radius:50%;background:linear-gradient(180deg,var(--gold-1),var(--gold-2));display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;cursor:pointer;box-shadow:0 4px 16px rgba(0,0,0,.12);font-size:1.2rem}
+    .profile-circle:hover{transform:scale(1.05)}
+    .tier-badge{display:inline-block;padding:4px 12px;background:linear-gradient(90deg,var(--gold-1),var(--gold-2));color:#fff;border-radius:999px;font-size:.85rem;font-weight:600}
+    .hdr-actions{display:flex;gap:12px;align-items:center}
+    .logout{background:#fff;color:#c0392b;border:2px solid #c0392b;padding:.6rem .9rem;border-radius:8px;cursor:pointer;font-weight:600}
+    .logout:hover{background:#c0392b;color:#fff}
+    .grid {display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+    .panel {background:#fff;padding:18px;border-radius:10px;box-shadow:0 4px 16px rgba(10,10,10,.06);border-top:4px solid var(--gold-1)}
+    .panel h4{margin:0 0 .8rem;color:#222;font-size:1.1rem;display:flex;justify-content:space-between;align-items:center}
+    .panel .muted{color:#888;font-size:.95rem}
+    .panel .list{max-height:280px;overflow-y:auto;margin-top:.8rem}
+    .booking-item{display:flex;justify-content:space-between;padding:.8rem;background:#f9f9f9;border-radius:8px;margin-bottom:.8rem;border-left:4px solid var(--gold-1)}
+    .booking-item .details{flex:1}
+    .booking-item .title{font-weight:700;color:#222;margin-bottom:.2rem}
+    .booking-item .meta{font-size:.9rem;color:#666;margin-bottom:.4rem}
+    .booking-item .status{display:inline-block;padding:2px 8px;border-radius:4px;font-size:.85rem;font-weight:600}
+    .booking-item .status.confirmed{background:#d5f4e6;color:var(--success)}
+    .booking-item .status.cancelled{background:#fadbd8;color:var(--danger)}
+    .booking-item .status.pending{background:#fdebd0;color:var(--warning)}
+    .btn-link{background:none;border:none;color:var(--gold-1);cursor:pointer;padding:0;font-weight:600;font-size:.95rem}
+    .btn-link:hover{text-decoration:underline}
+    .filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1rem;align-items:center}
+    .search{display:flex;gap:8px;align-items:center;flex:1;min-width:200px}
+    .search input{flex:1}
+    .modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.6);display:none;align-items:center;justify-content:center;z-index:50;backdrop-filter:blur(4px)}
+    .modal{background:#fff;border-radius:12px;padding:24px;max-width:600px;width:95%;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.3)}
+    .modal h4{margin-top:0;color:var(--gold-1)}
+    .modal-close{position:absolute;top:16px;right:16px;background:none;border:none;font-size:1.5rem;cursor:pointer;color:#999}
+    .seats{display:grid;grid-template-columns:repeat(10,1fr);gap:6px;margin-bottom:1rem}
+    .seat{padding:10px;background:#f1f1f1;border-radius:6px;text-align:center;cursor:pointer;font-weight:600;border:2px solid transparent}
+    .seat:hover{background:#e0e0e0;border-color:var(--gold-1)}
+    .seat.selected{background:var(--gold-1);color:#fff;border-color:var(--gold-2)}
+    .seat.unavailable{background:#ccc;color:#999;cursor:not-allowed;opacity:.6}
+    .badge{display:inline-block;padding:4px 10px;border-radius:999px;background:#f0f0f0;font-size:.82rem;font-weight:600;color:#666}
+    .preference-section{margin-bottom:1.2rem;padding-bottom:1.2rem;border-bottom:1px solid #eee}
+    .preference-section:last-child{border-bottom:none}
+    .preference-group{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:.4rem}
+    .checkbox-label{display:flex;align-items:center;gap:8px;cursor:pointer}
+    .checkbox-label input{width:18px;height:18px;cursor:pointer}
+    .profile-row{display:flex;gap:12px}
+    .profile-row > div{flex:1}
+    .security-info{background:#f0f8ff;padding:12px;border-radius:8px;border-left:4px solid #2196F3;margin-bottom:1rem;font-size:.95rem}
+    .two-fa-status{display:flex;align-items:center;gap:8px;margin:.6rem 0}
+    .status-indicator{width:12px;height:12px;border-radius:50%;display:inline-block}
+    .status-indicator.active{background:var(--success)}
+    .status-indicator.inactive{background:#ccc}
+    .loyalty-card{background:linear-gradient(135deg,var(--gold-1),var(--gold-2));color:#fff;padding:20px;border-radius:12px;margin-bottom:1rem}
+    .loyalty-card .points{font-size:2rem;font-weight:700}
+    .loyalty-card .label{font-size:.9rem;opacity:.9}
+    .transaction-item{display:flex;justify-content:space-between;padding:.8rem;border-bottom:1px dashed #eee;font-size:.95rem}
+    .transaction-item .date{color:#666}
+    .transaction-item .amount{font-weight:600;color:var(--gold-1)}
+    @media (max-width:1024px){.grid{grid-template-columns:repeat(2,1fr)}.seats{grid-template-columns:repeat(8,1fr)}}
+    @media (max-width:768px){.grid{grid-template-columns:1fr}.form-block.panel{margin:12px}.dash-header{flex-direction:column;align-items:flex-start}.filters{flex-direction:column}.search{flex-direction:column}.search input{width:100%}}
   </style>
 </head>
-<body>
-  <header class="navbar">
-    <img src="logo/A modern logo for Go.png" alt="Gold Cinema Logo" class="logo" />
-    <nav>
-      <ul>
-        <li><a href="index.html">Home</a></li>
-        <li><a href="events.html">Events</a></li>
-      </ul>
-    </nav>
-  </header>
+<body data-page="account">
 
-  <main class="form-container">
-    <h2>Welcome to Gold Cinema</h2>
-    <p class="lead">Step into the spotlight — your Gold Cinema journey begins here!.</p>
+<!-- Registration Form -->
+<section class="form-block panel" id="signupSection">
+  <h3>Create Account</h3>
+  <div id="signupAlert" class="alert"></div>
+  <form id="registrationForm" autocomplete="on">
+    
+    <label for="firstName">First Name *</label>
+    <input id="firstName" name="firstName" type="text" placeholder="John" required />
 
-    <div class="forms">
-      <!-- Registration Section -->
-      <section class="form-block panel">
-        <h3>Create an Account</h3>
-        <form id="registrationForm" autocomplete="on">
-          <div class="row">
-            <div style="flex:1;">
-              <label for="firstName">First Name</label>
-              <input id="firstName" name="firstName" type="text" placeholder="First Name" required />
-            </div>
-            <div style="width:140px;">
-              <label for="lastName">Last Name</label>
-              <input id="lastName" name="lastName" type="text" placeholder="Last Name" required />
-            </div>
-          </div>
+    <label for="lastName">Last Name *</label>
+    <input id="lastName" name="lastName" type="text" placeholder="Doe" required />
 
-          <label for="address">Address</label>
-          <input id="address" name="address" type="text" placeholder="Street, City" required />
+    <label for="dob">Date of Birth *</label>
+    <input id="dob" name="dob" type="date" required />
 
-          <div class="row">
-            <div style="flex:1;">
-              <label for="zip">Zip Code</label>
-              <input id="zip" name="zip" type="text" placeholder="Zip Code" required />
-            </div>
-            <div style="flex:1;">
-              <label for="mobile">Mobile Number</label>
-              <input id="mobile" name="mobile" type="tel" placeholder="+254 7..." required />
-            </div>
-          </div>
+    <label for="regEmail">Email Address *</label>
+    <input id="regEmail" name="email" type="email" placeholder="john@example.com" required />
 
-          <label for="regEmail">Email</label>
-          <input id="regEmail" name="email" type="email" placeholder="you@example.com" required />
+    <label for="mobile">Phone Number *</label>
+    <input id="mobile" name="mobile" type="tel" placeholder="+254 712 345 678" required />
 
-          <label for="regPassword">Password</label>
-          <input id="regPassword" name="password" type="password" placeholder="Choose a password" required />
+    <label for="address">Street Address *</label>
+    <input id="address" name="address" type="text" placeholder="123 Main St" required />
 
-          <label for="referral">Advisor Referral (optional)</label>
-          <input id="referral" name="referral" type="text" placeholder="Referral code or name" />
-
-          <button type="submit">Register</button>
-          <p class="small">By registering you agree to our terms. We value your privacy.</p>
-        </form>
-      </section>
-
-      <!-- Divider -->
-      <hr class="divider" />
-
-      <!-- Login Section -->
-      <section class="form-block panel">
-        <h3>Already Registered?</h3>
-        <form id="loginForm" autocomplete="on">
-          <label for="loginEmail">Email</label>
-          <input id="loginEmail" name="loginEmail" type="email" placeholder="you@example.com" required />
-
-          <label for="loginPassword">Password</label>
-          <input id="loginPassword" name="loginPassword" type="password" placeholder="Enter password" required />
-
-          <button type="submit">Login</button>
-          <p class="small">Forgot password? Visit the account recovery page.</p>
-        </form>
-      </section>
+    <div class="row">
+      <div class="col">
+        <label for="city">City *</label>
+        <input id="city" name="city" type="text" placeholder="Nairobi" required />
+      </div>
+      <div class="col">
+        <label for="state">State *</label>
+        <input id="state" name="state" type="text" placeholder="County" required />
+      </div>
     </div>
-  </main>
 
-  <footer>
-    <p>&copy; 2025 Gold Cinema | Nakuru, Kenya</p>
-  </footer>
+    <label for="zip">Postal Code *</label>
+    <input id="zip" name="zip" type="text" placeholder="00100" required />
+
+    <label for="regPassword">Password *</label>
+    <input id="regPassword" name="password" type="password" placeholder="Min 8 chars, 1 uppercase, 1 number" required />
+
+    <label for="confirmPassword">Confirm Password *</label>
+    <input id="confirmPassword" name="confirmPassword" type="password" placeholder="Confirm password" required />
+
+    <label class="checkbox-label">
+      <input type="checkbox" id="termsAgree" required />
+      I agree to Terms & Privacy Policy
+    </label>
+
+    <button type="submit" class="btn" style="width:100%;margin-top:.6rem">Create Account</button>
+    
+    <p class="small">
+      Already have an account?
+      <a href="#signin" onclick="showSignIn();return false;">Sign In</a>
+    </p>
+  </form>
+</section>
+
+<!-- Sign In -->
+<section class="form-block panel" id="signInSection" style="display:none;">
+  <h3>Sign In</h3>
+  <div id="signinAlert" class="alert"></div>
+  <form id="signInForm" autocomplete="on">
+    <label for="signInEmail">Email Address *</label>
+    <input id="signInEmail" name="email" type="email" placeholder="your@email.com" required />
+
+    <label for="signInPassword">Password *</label>
+    <input id="signInPassword" name="password" type="password" placeholder="Your password" required />
+
+    <label class="checkbox-label">
+      <input type="checkbox" id="rememberMe" />
+      Remember me
+    </label>
+
+    <button type="submit" class="btn" style="width:100%;margin-top:.6rem">Sign In</button>
+    
+    <p class="small">
+      <a href="#forgot" onclick="showForgot();return false;">Forgot Password?</a>
+    </p>
+    <p class="small">
+      Don't have an account?
+      <a href="#signup" onclick="showSignUp();return false;">Create One</a>
+    </p>
+  </form>
+</section>
+
+<!-- Forgot Password -->
+<section class="form-block panel" id="forgotSection" style="display:none;">
+  <h3>Reset Password</h3>
+  <div id="forgotAlert" class="alert"></div>
+  <form id="forgotForm">
+    <p class="small" style="margin-top:0;color:#333">Enter your email to receive reset instructions</p>
+    <label for="forgotEmail">Email Address *</label>
+    <input id="forgotEmail" name="email" type="email" placeholder="your@email.com" required />
+    <button type="submit" class="btn" style="width:100%">Send Reset Link</button>
+    <p class="small">
+      <a href="#signin" onclick="showSignIn();return false;">Back to Sign In</a>
+    </p>
+  </form>
+</section>
+
+<!-- Dashboard (hidden until login) -->
+<section class="dashboard" id="dashboard">
+  <div class="dash-header">
+    <div class="welcome">
+      <div class="profile-circle" id="profileIcon" title="View profile">JD</div>
+      <div>
+        <div class="welcome-text">Welcome back, <strong id="welcomeName">User</strong>!</div>
+        <div style="font-size:.9rem;color:#666">
+          <span class="tier-badge" id="tierBadge">Gold Member</span>
+          <span class="badge">ID: <strong id="customerIdBadge">GC000000</strong></span>
+        </div>
+      </div>
+    </div>
+    <div class="hdr-actions">
+      <button class="logout" id="logoutBtn">Logout</button>
+    </div>
+  </div>
+
+  <div class="grid">
+    <!-- Booking History -->
+    <div class="panel" id="bookingPanel">
+      <h4>My Bookings <span class="badge" id="bookingCount">0</span></h4>
+      <div class="list" id="bookingList"></div>
+      <button class="btn-link" id="viewAllBookings" style="margin-top:1rem;display:none">View All Bookings</button>
+    </div>
+
+    <!-- Upcoming Events -->
+    <div class="panel">
+      <h4>Upcoming Events</h4>
+      <div class="filters">
+      <select id="filterType" style="flex:1">
+        <option value="">All Types</option>
+        <option value="movie">Movie</option>
+        <option value="play">Play</option>
+        <option value="concert">Concert</option>
+      </select>
+      </div>
+      <div class="filters">
+      <select id="filterGenre" style="flex:1">
+        <option value="">All Genres</option>
+        <option value="drama">Drama</option>
+        <option value="action">Action</option>
+        <option value="comedy">Comedy</option>
+        <option value="music">Music</option>
+      </select>
+      </div>
+      <div class="list" id="eventList"></div>
+    </div>
+
+    <!-- Loyalty & Rewards -->
+    <div class="panel">
+      <h4>Loyalty Program</h4>
+      <div class="loyalty-card">
+      <div class="label">Your Points</div>
+      <div class="points" id="loyaltyPoints">2,450</div>
+      <div class="label" style="margin-top:.6rem">Next Reward: 500 points away</div>
+      </div>
+      <div class="muted" style="margin-bottom:.8rem">Earn 1 point per dollar spent</div>
+      <div class="list" id="rewardsList">
+      <div style="padding:.6rem 0;border-bottom:1px dashed #eee">
+        <div style="font-weight:600;color:var(--gold-1)">Free Ticket Voucher</div>
+        <div class="muted">500 points</div>
+      </div>
+      </div>
+    </div>
+
+    <!-- Support & Help -->
+    <div class="panel">
+      <h4>Support & Help</h4>
+      <div class="muted" style="margin-bottom:1rem">Get help from our support team</div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <button class="btn secondary" id="openSupportModal">Raise a Ticket</button>
+        <button class="btn secondary" id="openFaqModal">FAQ & Help</button>
+        <a href="mailto:support@goldcinema.com" class="btn secondary" style="text-align:center;text-decoration:none">Email Support</a>
+      </div>
+      <div class="list" id="ticketList" style="margin-top:1rem"></div>
+    </div>
+
+    <!-- Preferences & Notifications -->
+    <div class="panel">
+      <h4>Preferences</h4>
+      <div class="preference-section">
+        <label style="font-weight:600;margin-bottom:.6rem;display:block">Notifications</label>
+        <label class="checkbox-label">
+          <input type="checkbox" class="pref-checkbox" data-pref="notif-email" checked />
+          Email Notifications
+        </label>
+        <label class="checkbox-label">
+          <input type="checkbox" class="pref-checkbox" data-pref="notif-sms" checked />
+          SMS Alerts
+        </label>
+        <label class="checkbox-label">
+          <input type="checkbox" class="pref-checkbox" data-pref="notif-promo" />
+          Promotional Offers
+        </label>
+      </div>
+      <div class="preference-section">
+        <label style="font-weight:600;margin-bottom:.6rem;display:block">Content Preferences</label>
+        <label class="checkbox-label">
+          <input type="checkbox" class="pref-checkbox" data-pref="pref-drama" checked />
+          Drama
+        </label>
+        <label class="checkbox-label">
+          <input type="checkbox" class="pref-checkbox" data-pref="pref-action" checked />
+          Action
+        </label>
+        <label class="checkbox-label">
+          <input type="checkbox" class="pref-checkbox" data-pref="pref-comedy" checked />
+          Comedy
+        </label>
+      </div>
+      <button class="btn secondary" id="savePrefsBtn" style="width:100%;margin-top:.6rem">Save Preferences</button>
+    </div>
+
+    <!-- Account & Security -->
+    <div class="panel">
+      <h4>Account & Security</h4>
+      <div class="security-info">
+        <strong>Account Status:</strong> <span style="color:var(--success)">✓ Verified</span>
+      </div>
+      <div style="margin-bottom:1rem">
+        <div style="font-weight:600;margin-bottom:.6rem">Two-Factor Authentication</div>
+        <div class="two-fa-status">
+          <span class="status-indicator active"></span>
+          <span id="twoFaStatus">Enabled • SMS</span>
+        </div>
+        <button class="btn secondary" id="manage2FABtn" style="width:100%;margin-top:.6rem">Manage 2FA</button>
+      </div>
+      <hr style="border:none;border-top:1px solid #eee;margin:.8rem 0">
+      <button class="btn secondary" id="changePasswordBtn" style="width:100%;margin-bottom:.6rem">Change Password</button>
+      <button class="btn secondary" id="deleteAccountBtn" style="width:100%;color:var(--danger)">Delete Account</button>
+    </div>
+
+    <!-- Payment Methods -->
+    <div class="panel">
+      <h4>Payment Methods</h4>
+      <div style="margin-bottom:1rem;padding:.8rem;background:#f9f9f9;border-radius:8px;border-left:4px solid var(--gold-1)">
+        <div style="font-weight:600;margin-bottom:.4rem">Visa •••• 4242</div>
+        <div class="muted">Expires: 12/2026</div>
+        <div style="margin-top:.6rem;display:flex;gap:8px">
+          <button class="btn-link">Edit</button>
+          <button class="btn-link" style="color:var(--danger)">Remove</button>
+        </div>
+      </div>
+      <button class="btn secondary" style="width:100%" id="addPaymentBtn">Add Payment Method</button>
+    </div>
+
+    <!-- Account Activity -->
+    <div class="panel">
+      <h4>Recent Activity</h4>
+      <div class="list" id="activityList">
+        <div class="transaction-item">
+          <div>
+            <div style="font-weight:600">Movie Booking</div>
+            <div class="date">Today at 2:45 PM</div>
+          </div>
+          <div class="amount">-KES 500</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Support Ticket Modal -->
+<div class="modal-backdrop" id="supportBackdrop" style="display:none">
+  <div class="modal">
+    <button class="modal-close" onclick="document.getElementById('supportBackdrop').style.display='none'">×</button>
+    <h4>Raise Support Ticket</h4>
+    <div id="ticketAlert" class="alert"></div>
+    <form id="ticketForm">
+      <label for="ticketCategory">Category *</label>
+      <select id="ticketCategory" required>
+        <option value="">Select a category</option>
+        <option value="booking">Booking Issue</option>
+        <option value="payment">Payment Issue</option>
+        <option value="technical">Technical Problem</option>
+        <option value="refund">Refund Request</option>
+        <option value="other">Other</option>
+      </select>
+
+      <label for="ticketSubject">Subject *</label>
+      <input id="ticketSubject" type="text" placeholder="Brief description" required />
+
+      <label for="ticketMessage">Message *</label>
+      <textarea id="ticketMessage" placeholder="Describe your issue in detail..." rows="5" required></textarea>
+
+      <label for="ticketAttachment">Attach File (Optional)</label>
+      <input id="ticketAttachment" type="file" accept="image/*,.pdf" />
+
+      <div style="display:flex;gap:8px;margin-top:1rem">
+        <button type="submit" class="btn" style="flex:1">Submit Ticket</button>
+        <button type="button" class="btn secondary" style="flex:1" onclick="document.getElementById('supportBackdrop').style.display='none'">Cancel</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Profile Modal -->
+<div class="modal-backdrop" id="profileBackdrop" style="display:none">
+  <div class="modal">
+    <button class="modal-close" onclick="document.getElementById('profileBackdrop').style.display='none'">×</button>
+    <h4>Edit Profile</h4>
+    <div id="profileAlert" class="alert"></div>
+    <form id="profileForm">
+      <div class="profile-row">
+        <div>
+          <label>First Name</label>
+          <input id="pFirst" type="text" required />
+        </div>
+        <div>
+          <label>Last Name</label>
+          <input id="pLast" type="text" required />
+        </div>
+      </div>
+
+      <label>Email</label>
+      <input id="pEmail" type="email" required />
+
+      <label>Phone</label>
+      <input id="pPhone" type="tel" required />
+
+      <label>Date of Birth</label>
+      <input id="pDob" type="date" required />
+
+      <label>Street Address</label>
+      <input id="pAddress" type="text" required />
+
+      <div class="profile-row">
+        <div>
+          <label>City</label>
+          <input id="pCity" type="text" required />
+        </div>
+        <div>
+          <label>State</label>
+          <input id="pState" type="text" required />
+        </div>
+      </div>
+
+      <label>Postal Code</label>
+      <input id="pZip" type="text" required />
+
+      <div style="display:flex;gap:8px;margin-top:1rem">
+        <button type="submit" class="btn" style="flex:1">Save Changes</button>
+        <button type="button" class="btn secondary" style="flex:1" onclick="document.getElementById('profileBackdrop').style.display='none'">Cancel</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Seat Selection Modal -->
+<div class="modal-backdrop" id="seatBackdrop" style="display:none">
+  <div class="modal">
+    <button class="modal-close" onclick="document.getElementById('seatBackdrop').style.display='none'">×</button>
+    <h4 id="seatModalTitle">Select Your Seats</h4>
+    <div style="margin-bottom:1rem;font-size:.95rem;color:#666">
+      <div>Price: <strong id="seatPrice">KES 500</strong></div>
+      <div style="margin-top:.4rem;color:var(--success)">Selected: <strong id="selectedSeatsDisplay">None</strong></div>
+    </div>
+    <div class="seats" id="seatsGrid"></div>
+    <div style="margin-top:1.5rem;display:flex;gap:8px;justify-content:flex-end">
+      <button class="btn secondary" onclick="document.getElementById('seatBackdrop').style.display='none'">Cancel</button>
+      <button class="btn" id="confirmSeatsBtn">Confirm & Book</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Demo data
+  const demoEvents = [
+    { id: 'e1', type: 'movie', title: 'A Golden Night', date: '2025-11-20', genre: 'drama', price: 500, image: '🎬' },
+    { id: 'e2', type: 'concert', title: 'Symphony Live', date: '2025-11-22', genre: 'music', price: 1200, image: '🎵' },
+    { id: 'e3', type: 'play', title: 'Stagecraft', date: '2025-12-01', genre: 'drama', price: 800, image: '🎭' },
+    { id: 'e4', type: 'movie', title: 'Action Rush', date: '2025-11-25', genre: 'action', price: 500, image: '🎬' },
+    { id: 'e5', type: 'concert', title: 'Indie Vibes', date: '2025-12-10', genre: 'music', price: 1000, image: '🎵' }
+  ];
+
+  const USERS_KEY = 'gv_users';
+  const CURR_KEY = 'gv_current';
+  const PREFS_KEY = 'gv_prefs';
+
+  function loadUsers(){ return JSON.parse(localStorage.getItem(USERS_KEY) || '{}'); }
+  function saveUsers(u){ localStorage.setItem(USERS_KEY, JSON.stringify(u)); }
+  function setCurrent(email){ localStorage.setItem(CURR_KEY, email); }
+  function getCurrent(){ return localStorage.getItem(CURR_KEY); }
+  function clearCurrent(){ localStorage.removeItem(CURR_KEY); }
+  function generateCustomerId(){ return 'GC' + Math.floor(100000 + Math.random()*900000); }
+
+  // Alert helpers
+  function showAlert(elementId, message, type = 'success') {
+    const alert = document.getElementById(elementId);
+    alert.textContent = message;
+    alert.className = `alert ${type} show`;
+    setTimeout(() => alert.classList.remove('show'), 4000);
+  }
+
+  // Password validation
+  function validatePassword(pw) {
+    const hasUpperCase = /[A-Z]/.test(pw);
+    const hasNumber = /[0-9]/.test(pw);
+    const isLongEnough = pw.length >= 8;
+    return { valid: hasUpperCase && hasNumber && isLongEnough, message: '' };
+  }
+
+  // Navigation
+  function showSignIn(){ 
+    document.getElementById('signupSection').style.display='none'; 
+    document.getElementById('signInSection').style.display='block';
+    document.getElementById('forgotSection').style.display='none';
+  }
+  function showSignUp(){ 
+    document.getElementById('signupSection').style.display='block'; 
+    document.getElementById('signInSection').style.display='none';
+    document.getElementById('forgotSection').style.display='none';
+  }
+  function showForgot(){
+    document.getElementById('signupSection').style.display='none'; 
+    document.getElementById('signInSection').style.display='none';
+    document.getElementById('forgotSection').style.display='block';
+  }
+
+  // Registration
+  document.getElementById('registrationForm').addEventListener('submit', function(e){
+    e.preventDefault();
+    const pw = document.getElementById('regPassword').value;
+    const cpw = document.getElementById('confirmPassword').value;
+    const email = document.getElementById('regEmail').value.trim().toLowerCase();
+    const users = loadUsers();
+    const dob = document.getElementById('dob').value;
+    const mobile = document.getElementById('mobile').value.trim();
+
+    if(pw !== cpw) {
+      showAlert('signupAlert', 'Passwords do not match!', 'error');
+      return;
+    }
+    const pwVal = validatePassword(pw);
+    if(!pwVal.valid) {
+      showAlert('signupAlert', 'Password must be 8+ chars with uppercase and number', 'error');
+      return;
+    }
+    if(users[email]) {
+      showAlert('signupAlert', 'Email already registered!', 'error');
+      return;
+    }
+    if(!document.getElementById('termsAgree').checked) {
+      showAlert('signupAlert', 'Please agree to Terms & Privacy Policy', 'error');
+      return;
+    }
+
+    const user = {
+      customerId: generateCustomerId(),
+      firstName: document.getElementById('firstName').value.trim(),
+      lastName: document.getElementById('lastName').value.trim(),
+      dob: dob,
+      email: email,
+      phone: mobile,
+      address: document.getElementById('address').value.trim(),
+      city: document.getElementById('city').value.trim(),
+      state: document.getElementById('state').value.trim(),
+      zip: document.getElementById('zip').value.trim(),
+      password: pw,
+      bookings: [],
+      tickets: [],
+      loyaltyPoints: 0,
+      tier: 'Silver',
+      createdAt: new Date().toISOString(),
+      verified: true,
+      twoFaEnabled: true,
+      paymentMethods: [],
+      preferences: {
+        'notif-email': true,
+        'notif-sms': true,
+        'notif-promo': false
+      }
+    };
+    users[email] = user;
+    saveUsers(users);
+    setCurrent(email);
+    showAlert('signupAlert', 'Account created successfully!', 'success');
+    setTimeout(() => showDashboard(email), 1500);
+  });
+
+  // Sign in
+  document.getElementById('signInForm').addEventListener('submit', function(e){
+    e.preventDefault();
+    const email = document.getElementById('signInEmail').value.trim().toLowerCase();
+    const pw = document.getElementById('signInPassword').value;
+    const users = loadUsers();
+    
+    if(users[email] && users[email].password === pw){
+      setCurrent(email);
+      showAlert('signinAlert', 'Signing in...', 'success');
+      setTimeout(() => showDashboard(email), 1000);
+    } else {
+      showAlert('signinAlert', 'Invalid email or password!', 'error');
+    }
+  });
+
+  // Forgot password
+  document.getElementById('forgotForm').addEventListener('submit', function(e){
+    e.preventDefault();
+    const email = document.getElementById('forgotEmail').value.trim().toLowerCase();
+    const users = loadUsers();
+    if(users[email]) {
+      showAlert('forgotAlert', 'Reset link sent to your email!', 'success');
+      setTimeout(() => showSignIn(), 2000);
+    } else {
+      showAlert('forgotAlert', 'Email not found in our system', 'error');
+    }
+  });
+
+  // Show dashboard
+  function showDashboard(email){
+    const users = loadUsers();
+    const user = users[email];
+    if(!user) return;
+
+    document.getElementById('welcomeName').textContent = user.firstName;
+    document.getElementById('customerIdBadge').textContent = user.customerId;
+    document.getElementById('tierBadge').textContent = user.tier + ' Member';
+    const initials = ((user.firstName||'')[0] + (user.lastName||'')[0]).toUpperCase();
+    document.getElementById('profileIcon').textContent = initials || 'U';
+    
+    // Fill profile form
+    document.getElementById('pFirst').value = user.firstName || '';
+    document.getElementById('pLast').value = user.lastName || '';
+    document.getElementById('pEmail').value = user.email || '';
+    document.getElementById('pPhone').value = user.phone || '';
+    document.getElementById('pDob').value = user.dob || '';
+    document.getElementById('pAddress').value = user.address || '';
+    document.getElementById('pCity').value = user.city || '';
+    document.getElementById('pState').value = user.state || '';
+    document.getElementById('pZip').value = user.zip || '';
+
+    // Load preferences
+    Object.keys(user.preferences || {}).forEach(key => {
+      const checkbox = document.querySelector(`[data-pref="${key}"]`);
+      if(checkbox) checkbox.checked = user.preferences[key];
+    });
+
+    document.getElementById('loyaltyPoints').textContent = (user.loyaltyPoints || 0).toLocaleString();
+    document.getElementById('bookingCount').textContent = (user.bookings || []).length;
+
+    renderEvents();
+    renderBookings(user);
+    renderTickets(user);
+    renderActivity(user);
+
+    document.getElementById('signupSection').style.display='none';
+    document.getElementById('signInSection').style.display='none';
+    document.getElementById('forgotSection').style.display='none';
+    document.getElementById('dashboard').style.display='block';
+  }
+
+  // Logout
+  document.getElementById('logoutBtn').addEventListener('click', function(){
+    clearCurrent();
+    document.getElementById('dashboard').style.display='none';
+    document.getElementById('signupSection').style.display='block';
+    document.getElementById('signInSection').style.display='none';
+    document.getElementById('forgotSection').style.display='none';
+  });
+
+  // Profile icon click
+  document.getElementById('profileIcon').addEventListener('click', function(){
+    document.getElementById('profileBackdrop').style.display='flex';
+  });
+
+  // Profile save
+  document.getElementById('profileForm').addEventListener('submit', function(e){
+    e.preventDefault();
+    const current = getCurrent();
+    if(!current) return;
+    const users = loadUsers();
+    const user = users[current];
+    user.firstName = document.getElementById('pFirst').value.trim();
+    user.lastName = document.getElementById('pLast').value.trim();
+    user.email = document.getElementById('pEmail').value.trim();
+    user.phone = document.getElementById('pPhone').value.trim();
+    user.dob = document.getElementById('pDob').value;
+    user.address = document.getElementById('pAddress').value.trim();
+    user.city = document.getElementById('pCity').value.trim();
+    user.state = document.getElementById('pState').value.trim();
+    user.zip = document.getElementById('pZip').value.trim();
+    users[current] = user;
+    saveUsers(users);
+    showAlert('profileAlert', 'Profile updated successfully!', 'success');
+    document.getElementById('profileBackdrop').style.display='none';
+    setTimeout(() => showDashboard(current), 1000);
+  });
+
+  // Change password
+  document.getElementById('changePasswordBtn').addEventListener('click', function(){
+    const current = getCurrent();
+    if(!current) return;
+    const users = loadUsers();
+    const user = users[current];
+    const oldPw = prompt('Enter current password:');
+    if(!oldPw) return;
+    if(oldPw !== user.password) {
+      alert('Current password is incorrect');
+      return;
+    }
+    const newPw = prompt('Enter new password (8+ chars, uppercase & number):');
+    if(!newPw) return;
+    const val = validatePassword(newPw);
+    if(!val.valid) {
+      alert('Password too weak: 8+ chars, uppercase & number required');
+      return;
+    }
+    const confirmPw = prompt('Confirm new password:');
+    if(confirmPw !== newPw) {
+      alert('Passwords do not match');
+      return;
+    }
+    user.password = newPw;
+    users[current] = user;
+    saveUsers(users);
+    alert('Password changed successfully!');
+  });
+
+  // Delete account
+  document.getElementById('deleteAccountBtn').addEventListener('click', function(){
+    if(confirm('Are you sure? This cannot be undone. Type DELETE to confirm.')) {
+      const current = getCurrent();
+      const users = loadUsers();
+      delete users[current];
+      saveUsers(users);
+      clearCurrent();
+      document.getElementById('dashboard').style.display='none';
+      document.getElementById('signupSection').style.display='block';
+      alert('Account deleted');
+    }
+  });
+
+  // Preferences
+  document.getElementById('savePrefsBtn').addEventListener('click', function(){
+    const current = getCurrent();
+    const users = loadUsers();
+    const user = users[current];
+    document.querySelectorAll('.pref-checkbox').forEach(cb => {
+      user.preferences[cb.dataset.pref] = cb.checked;
+    });
+    users[current] = user;
+    saveUsers(users);
+    showAlert('dashboard', 'Preferences saved!', 'success');
+  });
+
+  // Support tickets
+  document.getElementById('openSupportModal').addEventListener('click', function(){
+    document.getElementById('supportBackdrop').style.display='flex';
+  });
+
+  document.getElementById('ticketForm').addEventListener('submit', function(e){
+    e.preventDefault();
+    const current = getCurrent();
+    const users = loadUsers();
+    const user = users[current];
+    const ticket = {
+      id: 'T' + Date.now(),
+      category: document.getElementById('ticketCategory').value,
+      subject: document.getElementById('ticketSubject').value,
+      message: document.getElementById('ticketMessage').value,
+      status: 'open',
+      created: new Date().toLocaleDateString(),
+      response: null
+    };
+    user.tickets.push(ticket);
+    users[current] = user;
+    saveUsers(users);
+    showAlert('ticketAlert', 'Ticket submitted! Reference: ' + ticket.id, 'success');
+    document.getElementById('ticketForm').reset();
+    setTimeout(() => document.getElementById('supportBackdrop').style.display='none', 2000);
+    renderTickets(user);
+  });
+
+  // Render tickets
+  function renderTickets(user){
+    const list = document.getElementById('ticketList');
+    list.innerHTML = '';
+    if(!user.tickets || user.tickets.length === 0) {
+      list.innerHTML = '<div class="muted">No support tickets yet</div>';
+      return;
+    }
+    user.tickets.slice().reverse().forEach(t => {
+      const div = document.createElement('div');
+      div.style.padding = '.8rem';
+      div.style.background = '#f9f9f9';
+      div.style.borderRadius = '8px';
+      div.style.marginBottom = '.6rem';
+      div.innerHTML = `
+        <div style="display:flex;justify-content:space-between;align-items:start">
+          <div>
+            <div style="font-weight:600">${t.subject}</div>
+            <div class="muted">${t.id} • ${t.created}</div>
+            <div class="status ${t.status}">${t.status.toUpperCase()}</div>
+          </div>
+        </div>
+      `;
+      list.appendChild(div);
+    });
+  }
+
+  // Render bookings
+  function renderBookings(user){
+    const list = document.getElementById('bookingList');
+    list.innerHTML = '';
+    if(!user.bookings || user.bookings.length === 0) {
+      list.innerHTML = '<div class="muted">No bookings yet. Start booking now!</div>';
+      return;
+    }
+    user.bookings.slice().reverse().slice(0, 3).forEach(b => {
+      const div = document.createElement('div');
+      div.className = 'booking-item';
+      div.innerHTML = `
+        <div class="details">
+          <div class="title">${b.eventName}</div>
+          <div class="meta">${b.date} • Seat ${b.seat}</div>
+          <span class="status ${b.status}">${b.status.toUpperCase()}</span>
+        </div>
+        <div style="text-align:right">
+          <div class="muted" style="margin-bottom:.4rem">KES 500</div>
+          ${b.status === 'confirmed' ? `
+            <button class="btn-link" onclick="cancelBooking('${b.id}')">Cancel</button>
+          ` : ''}
+        </div>
+      `;
+      list.appendChild(div);
+    });
+    if(user.bookings.length > 3) {
+      document.getElementById('viewAllBookings').style.display = 'block';
+    }
+  }
+
+  // Events
+  function renderEvents(){
+    const list = document.getElementById('eventList');
+    list.innerHTML = '';
+    const t = document.getElementById('filterType').value;
+    const g = document.getElementById('filterGenre').value;
+    const filtered = demoEvents.filter(ev => 
+      (t ? ev.type === t : true) && (g ? ev.genre === g : true)
+    );
+    filtered.forEach(ev => {
+      const div = document.createElement('div');
+      div.style.padding = '.8rem';
+      div.style.background = '#f9f9f9';
+      div.style.borderRadius = '8px';
+      div.style.marginBottom = '.6rem';
+      div.style.display = 'flex';
+      div.style.justifyContent = 'space-between';
+      div.style.alignItems = 'center';
+      div.innerHTML = `
+        <div>
+          <div style="font-weight:600;margin-bottom:.2rem">${ev.title}</div>
+          <div class="muted">${ev.type.charAt(0).toUpperCase() + ev.type.slice(1)} • ${ev.genre} • ${ev.date}</div>
+          <div style="margin-top:.4rem;font-weight:600;color:var(--gold-1)">KES ${ev.price}</div>
+        </div>
+        <button class="btn" onclick="openSeatModal('${ev.id}', '${ev.title}', ${ev.price})">Book Now</button>
+      `;
+      list.appendChild(div);
+    });
+    if(filtered.length === 0) {
+      list.innerHTML = '<div class="muted">No events match your filters</div>';
+    }
+  }
+
+  document.getElementById('filterType').addEventListener('change', renderEvents);
+  document.getElementById('filterGenre').addEventListener('change', renderEvents);
+
+  // Seat booking
+  let seatSelection = { eventId: null, seats: [], eventTitle: '', price: 0 };
+
+  function openSeatModal(evId, title, price){
+    seatSelection = { eventId: evId, seats: [], eventTitle: title, price: price };
+    document.getElementById('seatModalTitle').textContent = 'Select Seats — ' + title;
+    document.getElementById('seatPrice').textContent = 'KES ' + price;
+    const grid = document.getElementById('seatsGrid');
+    grid.innerHTML = '';
+    for(let i = 1; i <= 48; i++) {
+      const s = document.createElement('div');
+      s.className = 'seat';
+      s.textContent = i;
+      s.dataset.seat = i;
+      const unavailable = [5, 12, 19, 26].includes(i);
+      if(unavailable) s.classList.add('unavailable');
+      s.addEventListener('click', function(){
+        if(!unavailable) {
+          if(s.classList.contains('selected')) {
+            s.classList.remove('selected');
+            seatSelection.seats = seatSelection.seats.filter(x => x != i);
+          } else {
+            s.classList.add('selected');
+            seatSelection.seats.push(i);
+          }
+          document.getElementById('selectedSeatsDisplay').textContent = 
+            seatSelection.seats.length > 0 ? seatSelection.seats.join(', ') : 'None';
+        }
+      });
+      grid.appendChild(s);
+    }
+    document.getElementById('seatBackdrop').style.display = 'flex';
+  }
+
+  document.getElementById('confirmSeatsBtn').addEventListener('click', function(){
+    if(seatSelection.seats.length === 0) {
+      alert('Please select at least one seat');
+      return;
+    }
+    const current = getCurrent();
+    if(!current) return;
+    const users = loadUsers();
+    const user = users[current];
+    const ev = demoEvents.find(e => e.id === seatSelection.eventId);
+    seatSelection.seats.forEach(seat => {
+      const booking = {
+        id: 'B' + Date.now() + Math.random(),
+        eventId: ev.id,
+        eventName: ev.title,
+        date: ev.date,
+        seat: seat,
+        status: 'confirmed',
+        price: seatSelection.price
+      };
+      user.bookings.push(booking);
+      user.loyaltyPoints = (user.loyaltyPoints || 0) + Math.floor(seatSelection.price / 100);
+    });
+    users[current] = user;
+    saveUsers(users);
+    document.getElementById('seatBackdrop').style.display = 'none';
+    renderBookings(user);
+    document.getElementById('loyaltyPoints').textContent = user.loyaltyPoints.toLocaleString();
+    alert('Booking confirmed! Seats: ' + seatSelection.seats.join(', '));
+  });
+
+  window.cancelBooking = function(bookingId){
+    const current = getCurrent();
+    const users = loadUsers();
+    const user = users[current];
+    const b = user.bookings.find(x => x.id === bookingId);
+    if(b) {
+      b.status = 'cancelled';
+      users[current] = user;
+      saveUsers(users);
+      renderBookings(user);
+      alert('Booking cancelled');
+    }
+  };
+
+  // Activity
+  function renderActivity(user){
+    const list = document.getElementById('activityList');
+    list.innerHTML = '';
+    if(!user.bookings || user.bookings.length === 0) {
+      list.innerHTML = '<div class="muted">No activity yet</div>';
+      return;
+    }
+    user.bookings.slice().reverse().slice(0, 5).forEach(b => {
+      const div = document.createElement('div');
+      div.className = 'transaction-item';
+      div.innerHTML = `
+        <div>
+          <div style="font-weight:600">${b.eventName}</div>
+          <div class="date">Booking ${b.status}</div>
+        </div>
+        <div class="amount">-KES ${b.price || 500}</div>
+      `;
+      list.appendChild(div);
+    });
+  }
+
+  // Initialize
+  window.addEventListener('load', function(){
+    const current = getCurrent();
+    if(current) {
+      showDashboard(current);
+    } else {
+      showSignUp();
+    }
+    renderEvents();
+  });
+</script>
 </body>
 </html>

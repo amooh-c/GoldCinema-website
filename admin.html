@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Gold Cinema — Admin</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <style>
+    :root{--accent:#cfa63a;--muted:#6b7280;--bg:#f6f7fb;--panel:#ffffff}
+    *{box-sizing:border-box;font-family:Segoe UI, Arial, sans-serif}
+    body{margin:0;background:linear-gradient(120deg,#232526,#414345);color:#111}
+    .container{max-width:1100px;margin:0 auto;padding:1rem}
+    .admin-header{background:#111827;color:#fff;padding:.75rem 0;box-shadow:0 1px 6px rgba(0,0,0,.2)}
+    .admin-header h1{margin:0;font-size:1.25rem;display:inline-block}
+    .admin-nav{float:right}
+    .admin-nav a{color:#fff;margin-left:1rem;text-decoration:none}
+    .admin-main{padding:1.25rem 0}
+    .panel{background:var(--panel);border-radius:10px;padding:1rem;margin-bottom:1rem;box-shadow:0 6px 18px rgba(0,0,0,.06)}
+    .btn{background:var(--accent);color:#111;padding:.5rem .75rem;border-radius:8px;border:none;cursor:pointer;font-weight:600}
+    .btn.secondary{background:#efefef;color:#333;border:1px solid #ddd}
+    .small.muted{color:#666}
+    .row{display:flex;gap:.5rem;flex-wrap:wrap}
+    .row input, .row select{padding:.5rem;border:1px solid #e5e7eb;border-radius:8px}
+    .list{margin-top:.75rem}
+    .list .item{display:flex;justify-content:space-between;align-items:center;padding:.6rem;background:#f9fafb;border-radius:8px;margin-bottom:.5rem;border-left:4px solid var(--accent)}
+    .list .meta{color:var(--muted);font-size:.95rem}
+    .alert{padding:.6rem;border-radius:8px;margin-bottom:.6rem;display:none}
+    .alert.show{display:block}
+    .toolbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:.5rem}
+    .tabs .tab{background:transparent;border:none;padding:.5rem 0;margin-right:.5rem;cursor:pointer;font-weight:700}
+    .tabs .tab.active{color:var(--accent);border-bottom:2px solid var(--accent)}
+    input[type="file"]{display:none}
+    @media (max-width:700px){.row{flex-direction:column}}
+    /* small helpers */
+    label{display:block;margin-bottom:.25rem;color:#333;font-weight:600}
+    input[type="text"], input[type="password"], input[type="number"], input[type="date"], select{width:100%;padding:.5rem;border-radius:8px;border:1px solid #e5e7eb}
+  </style>
+</head>
+<body>
+  <header class="admin-header">
+    <div class="container">
+      <h1>Gold Cinema — Admin</h1>
+      <nav class="admin-nav">
+        <a href="index.html">Public Site</a>
+        <a id="logoutLink" href="#" style="display:none">Logout</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container admin-main">
+    <section id="adminLoginSection" class="panel">
+      <h2>Admin Login</h2>
+      <div class="small muted">Use a secure password. Default: <strong>admin123</strong> (change below)</div>
+      <div id="loginAlert" class="alert"></div>
+      <form id="adminLoginForm">
+        <label for="adminPassword">Password</label>
+        <input id="adminPassword" type="password" placeholder="Admin password" required />
+        <div style="margin-top:.6rem">
+          <button class="btn" type="submit">Sign In</button>
+        </div>
+      </form>
+    </section>
+
+    <section id="adminConsole" class="panel" style="display:none">
+      <div class="toolbar">
+        <div class="tabs" role="tablist" aria-label="Admin tabs">
+          <button class="tab active" data-tab="events">Events</button>
+          <button class="tab" data-tab="users">Users</button>
+          <button class="tab" data-tab="bookings">Bookings</button>
+          <button class="tab" data-tab="settings">Settings</button>
+        </div>
+        <div class="actions">
+          <button id="exportBtn" class="btn secondary">Export JSON</button>
+          <input id="importFile" type="file" accept="application/json" />
+          <button id="importBtn" class="btn secondary">Import JSON</button>
+        </div>
+      </div>
+
+      <div id="tabContent">
+        <!-- Events Tab -->
+        <div class="tabPane" id="tab-events" style="display:block">
+          <h3>Events</h3>
+          <form id="addEventForm" class="row" style="margin-bottom:.75rem">
+            <input id="evTitle" placeholder="Title" required />
+            <input id="evDate" type="date" required />
+            <input id="evPrice" type="number" placeholder="Price (KES)" required />
+            <select id="evType">
+              <option value="movie">Movie</option>
+              <option value="play">Play</option>
+              <option value="concert">Concert</option>
+            </select>
+            <input id="evGenre" placeholder="Genre" />
+            <div style="min-width:150px;display:flex;align-items:center">
+              <button class="btn" type="submit" style="width:100%">Add Event</button>
+            </div>
+          </form>
+          <div id="eventsList" class="list"></div>
+        </div>
+
+        <!-- Users Tab -->
+        <div class="tabPane" id="tab-users" style="display:none">
+          <h3>Users</h3>
+          <div id="usersList" class="list"></div>
+        </div>
+
+        <!-- Bookings Tab -->
+        <div class="tabPane" id="tab-bookings" style="display:none">
+          <h3>Bookings</h3>
+          <div id="bookingsList" class="list"></div>
+        </div>
+
+        <!-- Settings Tab -->
+        <div class="tabPane" id="tab-settings" style="display:none">
+          <h3>Settings</h3>
+          <label for="adminNewPw">Change Admin Password</label>
+          <input id="adminNewPw" type="password" placeholder="New admin password" />
+          <div style="margin-top:.6rem">
+            <button id="changePwBtn" class="btn">Change Password</button>
+          </div>
+
+          <h4 style="margin-top:1rem">Data / Reset</h4>
+          <div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.5rem">
+            <button id="seedBtn" class="btn secondary">Seed Demo Data</button>
+            <button id="clearDataBtn" class="btn secondary" style="color:#c0392b">Clear All Users & Events</button>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="admin-footer">
+    <div class="container">
+      <small style="color:#ddd">&copy; 2025 Gold Cinema — Admin</small>
+    </div>
+  </footer>
+
+  <script>
+    /*
+      Single-file admin logic.
+      Uses localStorage keys:
+      - gv_users (users)
+      - gv_events (events)
+      - gv_admin_pw (admin password, obfuscated)
+      This is client-side only and not secure for production.
+    */
+
+    const USERS_KEY = 'gv_users';
+    const EVENTS_KEY = 'gv_events';
+    const ADMIN_PW_KEY = 'gv_admin_pw';
+
+    const DEMO_EVENTS = [
+      { id: 'e1', type: 'movie', title: 'A Golden Night', date: '2025-11-20', genre: 'drama', price: 500 },
+      { id: 'e2', type: 'concert', title: 'Symphony Live', date: '2025-11-22', genre: 'music', price: 1200 },
+      { id: 'e3', type: 'play', title: 'Stagecraft', date: '2025-12-01', genre: 'drama', price: 800 },
+      { id: 'e4', type: 'movie', title: 'Action Rush', date: '2025-11-25', genre: 'action', price: 500 },
+      { id: 'e5', type: 'concert', title: 'Indie Vibes', date: '2025-12-10', genre: 'music', price: 1000 }
+    ];
+
+    function loadEvents(){ return JSON.parse(localStorage.getItem(EVENTS_KEY) || 'null') || null; }
+    function saveEvents(e){ localStorage.setItem(EVENTS_KEY, JSON.stringify(e)); }
+    function loadUsers(){ return JSON.parse(localStorage.getItem(USERS_KEY) || '{}'); }
+    function saveUsers(u){ localStorage.setItem(USERS_KEY, JSON.stringify(u)); }
+
+    function obfuscate(s){ return btoa(s || ''); }
+    function deobfuscate(s){ try { return atob(s || ''); } catch(e){ return ''; } }
+
+    function ensureSeed(){
+      if(!loadEvents()){
+        saveEvents(DEMO_EVENTS.slice());
+      }
+      if(!localStorage.getItem(ADMIN_PW_KEY)){
+        localStorage.setItem(ADMIN_PW_KEY, obfuscate('admin123')); // default password
+      }
+    }
+
+    ensureSeed();
+
+    function el(id){ return document.getElementById(id); }
+    function showAlert(id, txt, timeout=3000){
+      const a = el(id);
+      if(!a) return;
+      a.textContent = txt;
+      a.classList.add('show');
+      setTimeout(() => a.classList.remove('show'), timeout);
+    }
+
+    // Admin login
+    const loginForm = el('adminLoginForm');
+    loginForm.addEventListener('submit', function(e){
+      e.preventDefault();
+      const pw = el('adminPassword').value.trim();
+      const stored = deobfuscate(localStorage.getItem(ADMIN_PW_KEY));
+      if(pw === stored){
+        openAdmin();
+      } else {
+        showAlert('loginAlert', 'Wrong password', 2500);
+      }
+    });
+
+    function openAdmin(){
+      el('adminLoginSection').style.display = 'none';
+      el('adminConsole').style.display = 'block';
+      el('logoutLink').style.display = 'inline';
+      renderEvents(); renderUsers(); renderBookings();
+    }
+
+    // Logout
+    el('logoutLink').addEventListener('click', function(e){ e.preventDefault(); logoutAdmin(); });
+    function logoutAdmin(){
+      el('adminConsole').style.display = 'none';
+      el('adminLoginSection').style.display = 'block';
+      el('logoutLink').style.display = 'none';
+      loginForm.reset();
+    }
+
+    // Tabs
+    document.querySelectorAll('.tab').forEach(btn=>{
+      btn.addEventListener('click', function(){
+        document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));
+        btn.classList.add('active');
+        document.querySelectorAll('.tabPane').forEach(p=>p.style.display = 'none');
+        const pane = el('tab-' + btn.dataset.tab);
+        if(pane) pane.style.display = 'block';
+      });
+    });
+
+    // Events management
+    function renderEvents(){
+      const events = loadEvents() || [];
+      const list = el('eventsList');
+      list.innerHTML = '';
+      if(events.length === 0){ list.innerHTML = '<div class="muted">No events</div>'; return; }
+      events.slice().reverse().forEach(ev=>{
+        const div = document.createElement('div'); div.className = 'item';
+        div.innerHTML = `
+          <div>
+            <div style="font-weight:700">${escapeHtml(ev.title)}</div>
+            <div class="meta">${escapeHtml(ev.type)} • ${escapeHtml(ev.genre || '—')} • ${escapeHtml(ev.date)} • KES ${ev.price}</div>
+          </div>
+          <div>
+            <button class="btn secondary" onclick="editEvent('${ev.id}')">Edit</button>
+            <button class="btn" onclick="deleteEvent('${ev.id}')">Delete</button>
+          </div>
+        `;
+        list.appendChild(div);
+      });
+    }
+
+    window.deleteEvent = function(id){
+      if(!confirm('Delete event?')) return;
+      let events = loadEvents() || [];
+      events = events.filter(e => e.id !== id);
+      saveEvents(events);
+      renderEvents();
+      renderBookings();
+    };
+
+    window.editEvent = function(id){
+      const events = loadEvents() || [];
+      const ev = events.find(x=>x.id===id);
+      if(!ev) return alert('Event not found');
+      const title = prompt('Title', ev.title);
+      if(title === null) return;
+      ev.title = title;
+      ev.date = prompt('Date (YYYY-MM-DD)', ev.date) || ev.date;
+      ev.price = parseInt(prompt('Price (KES)', ev.price) || ev.price, 10);
+      ev.type = prompt('Type (movie/concert/play)', ev.type) || ev.type;
+      ev.genre = prompt('Genre', ev.genre) || ev.genre;
+      saveEvents(events);
+      renderEvents();
+      renderBookings();
+    };
+
+    el('addEventForm').addEventListener('submit', function(e){
+      e.preventDefault();
+      const title = el('evTitle').value.trim();
+      const date = el('evDate').value;
+      const price = parseInt(el('evPrice').value, 10) || 0;
+      const type = el('evType').value;
+      const genre = el('evGenre').value.trim();
+      if(!title || !date) return;
+      const events = loadEvents() || [];
+      const id = 'e' + Date.now();
+      events.push({ id, title, date, price, type, genre });
+      saveEvents(events);
+      el('addEventForm').reset();
+      renderEvents();
+    });
+
+    // Users management
+    function renderUsers(){
+      const users = loadUsers();
+      const list = el('usersList');
+      list.innerHTML = '';
+      const keys = Object.keys(users);
+      if(keys.length===0){ list.innerHTML = '<div class="muted">No registered users</div>'; return; }
+      keys.slice().reverse().forEach(email=>{
+        const u = users[email];
+        const div = document.createElement('div'); div.className='item';
+        div.innerHTML = `
+          <div>
+            <div style="font-weight:700">${escapeHtml(u.firstName || '—')} ${escapeHtml(u.lastName || '')} • ${escapeHtml(u.customerId || '')}</div>
+            <div class="meta">${escapeHtml(email)} • ${escapeHtml(u.phone || '—')}</div>
+          </div>
+          <div>
+            <button class="btn secondary" onclick="viewUser('${email}')">View</button>
+            <button class="btn" onclick="deleteUser('${email}')">Delete</button>
+          </div>
+        `;
+        list.appendChild(div);
+      });
+    }
+
+    window.viewUser = function(email){
+      const users = loadUsers(); const u = users[email];
+      if(!u) return alert('User not found');
+      const info = [
+        `Name: ${u.firstName || ''} ${u.lastName || ''}`,
+        `Email: ${u.email}`,
+        `Phone: ${u.phone || ''}`,
+        `Bookings: ${(u.bookings||[]).length}`,
+        `Loyalty points: ${u.loyaltyPoints || 0}`
+      ].join('\n');
+      alert(info);
+    };
+
+    window.deleteUser = function(email){
+      if(!confirm('Delete user and all their bookings?')) return;
+      const users = loadUsers();
+      delete users[email];
+      saveUsers(users);
+      renderUsers();
+      renderBookings();
+    };
+
+    // Bookings view (aggregate across users)
+    function renderBookings(){
+      const users = loadUsers();
+      const bookings = [];
+      Object.keys(users).forEach(email=>{
+        (users[email].bookings || []).forEach(b => bookings.push({ ...b, userEmail: email }));
+      });
+      const list = el('bookingsList');
+      list.innerHTML = '';
+      if(bookings.length === 0){ list.innerHTML = '<div class="muted">No bookings</div>'; return; }
+      bookings.slice().reverse().forEach(b=>{
+        const ev = (loadEvents() || []).find(e => e.id === b.eventId);
+        const eventTitle = ev? ev.title : b.eventName || 'Unknown';
+        const div = document.createElement('div'); div.className='item';
+        div.innerHTML = `
+          <div>
+            <div style="font-weight:700">${escapeHtml(eventTitle)} • Seat ${escapeHtml(String(b.seat))}</div>
+            <div class="meta">${escapeHtml(b.userEmail)} • ${escapeHtml(b.date)} • ${escapeHtml(b.status)}</div>
+          </div>
+          <div>
+            <button class="btn secondary" onclick="viewBooking('${b.id}')">View</button>
+            <button class="btn" onclick="cancelBookingAdmin('${b.id}')">Cancel</button>
+          </div>
+        `;
+        list.appendChild(div);
+      });
+    }
+
+    window.viewBooking = function(id){
+      const users = loadUsers();
+      for(const email of Object.keys(users)){
+        const b = (users[email].bookings || []).find(x => x.id === id);
+        if(b) {
+          alert(`Booking ${b.id}\nUser: ${email}\nEvent: ${b.eventName}\nSeat: ${b.seat}\nStatus: ${b.status}`);
+          return;
+        }
+      }
+      alert('Booking not found');
+    };
+
+    window.cancelBookingAdmin = function(id){
+      if(!confirm('Mark booking as cancelled?')) return;
+      const users = loadUsers();
+      for(const email of Object.keys(users)){
+        const b = (users[email].bookings || []).find(x => x.id === id);
+        if(b){ b.status = 'cancelled'; saveUsers(users); renderBookings(); renderUsers(); return; }
+      }
+      alert('Booking not found');
+    };
+
+    // Export / Import
+    el('exportBtn').addEventListener('click', function(){
+      const data = {
+        users: loadUsers(),
+        events: loadEvents()
+      };
+      const blob = new Blob([JSON.stringify(data, null, 2)], {type:'application/json'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a'); a.href = url; a.download = 'goldcinema-export.json'; document.body.appendChild(a); a.click();
+      setTimeout(()=>{ URL.revokeObjectURL(url); a.remove(); }, 1000);
+    });
+
+    el('importBtn').addEventListener('click', function(){ el('importFile').click(); });
+    el('importFile').addEventListener('change', function(e){
+      const f = e.target.files[0]; if(!f) return;
+      const reader = new FileReader();
+      reader.onload = () => {
+        try {
+          const obj = JSON.parse(reader.result);
+          if(obj.users) { localStorage.setItem(USERS_KEY, JSON.stringify(obj.users)); }
+          if(obj.events) { localStorage.setItem(EVENTS_KEY, JSON.stringify(obj.events)); }
+          renderEvents(); renderUsers(); renderBookings();
+          alert('Import completed');
+        } catch(err){ alert('Invalid JSON'); }
+      };
+      reader.readAsText(f);
+    });
+
+    // Settings
+    el('changePwBtn').addEventListener('click', function(){
+      const np = el('adminNewPw').value.trim();
+      if(!np) return alert('Enter a new password');
+      localStorage.setItem(ADMIN_PW_KEY, obfuscate(np));
+      el('adminNewPw').value = '';
+      alert('Admin password changed');
+    });
+
+    el('seedBtn').addEventListener('click', function(){
+      if(!confirm('Seed demo events? This will add demo events alongside existing ones.')) return;
+      const events = loadEvents() || [];
+      const ids = new Set(events.map(e=>e.id));
+      DEMO_EVENTS.forEach(d=>{
+        if(!ids.has(d.id)) events.push(d);
+      });
+      saveEvents(events);
+      renderEvents();
+      alert('Seeded demo events');
+    });
+
+    el('clearDataBtn').addEventListener('click', function(){
+      if(!confirm('Clear all users and events from localStorage? This cannot be undone.')) return;
+      localStorage.removeItem(USERS_KEY);
+      localStorage.removeItem(EVENTS_KEY);
+      renderEvents(); renderUsers(); renderBookings();
+      alert('Data cleared');
+    });
+
+    // small helper to escape text inserted in HTML
+    function escapeHtml(s){
+      if(s === null || s === undefined) return '';
+      return String(s).replace(/[&<>"']/g, function(m){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]; });
+    }
+
+    // initialize UI mapping (safe-guard)
+    document.querySelectorAll('.tab').forEach(t=>{
+      if(!t.dataset.tab) t.dataset.tab = t.textContent.toLowerCase().trim();
+    });
+  </script>
+</body>
+</html>

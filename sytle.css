@@ -1,6 +1,4 @@
-/* Optional: include this in your HTML <head>:
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;600&family=Permanent+Marker&display=swap" rel="stylesheet">
-*/
+
 
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;600&family=Permanent+Marker&display=swap');
 
@@ -9,10 +7,10 @@
     --panel: #222428;
     --accent-1: #ffd700; /* gold */
     --accent-2: #ff2d95; /* magenta */
-    --accent-3: #00e6ff; /* cyan */
-    --muted: #d8d8d8;
+    --accent-3: #00e6ff; /* cyan */ 
+    --muted: #220bee;
 }
-
+ 
 /* Base */
 *{box-sizing:border-box}
 html,body{height:100%}
